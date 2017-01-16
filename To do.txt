@@ -1,0 +1,5 @@
+- Better db login
+- Add login to config file
+- Prettify the UI
+- Figure out how to post/get from mongodb
+- Figure out how to get nodemon to work with browserify

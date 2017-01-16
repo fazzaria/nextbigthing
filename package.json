@@ -1,0 +1,31 @@
+{
+  "name": "next_big_thing",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "watchify -t browserify-css main.js > bundle.js main.js -o public/bundle.js | nodemon server"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "angular": "^1.6.1",
+    "body-parser": "^1.15.2",
+    "d3": "^4.4.0",
+    "express": "^4.14.0",
+    "jquery": "^3.1.1",
+    "mongodb": "^2.2.21",
+    "mongoose": "^4.7.6"
+  },
+  "browserify-css": {
+    "autoInject": true,
+    "minify": true,
+    "rootDir": "."
+  },
+  "devDependencies": {
+    "browserify-css": "^0.9.2",
+    "nodemon": "^1.11.0",
+    "watchify": "^3.8.0"
+  }
+}
