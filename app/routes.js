@@ -23,12 +23,7 @@ var routes = function(app) {
     // route to handle delete goes here (app.delete)
     
     app.get('/', function(req, res) {
-        console.log("got home request");
-        res.sendFile(path.join(__dirname, '../public/views/home.html')); // load our public/index.html file
-    });
-    app.get('/2', function(req, res) {
-        console.log("got 2 request");
-        res.sendFile(path.join(__dirname, '../public/views/second.html'));
+        res.sendFile(path.join(__dirname, '../public/index.html')); // load our public/index.html file
     });
 };
 

@@ -2,10 +2,22 @@
 var angular = require('angular');
 var angularRoute = require('angular-route');
 var $ = require('jquery');
+window.jQuery = $;
+//var bootstrap = require('bootstrap');
 var css = require('./public/css/style.css');
 
 var app = angular.module('app', []);
 angular.module('app', [angularRoute]);
+
+app.config(function ($httpProvider) {
+    $httpProvider.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded; charset=UTF-8';
+    $httpProvider.defaults.transformRequest = function(data) {
+        if (data === undefined) {
+            return data;
+        }
+        return $.param(data);
+	};
+});
 
 require('./public/js/controllers/MainCtrl')();
 
@@ -18,16 +30,6 @@ require('./public/js/services/CommentService')();
 require('./public/js/appRoutes')();
 
 angular.module('app', ['ngRoute', 'appRoutes', 'MainCtrl', 'UserCtrl', 'UserService', 'CommentCtrl', 'CommentService']);
-
-app.config(function ($httpProvider) {
-    $httpProvider.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded; charset=UTF-8';
-    $httpProvider.defaults.transformRequest = function(data) {
-        if (data === undefined) {
-            return data;
-        }
-        return $.param(data);
-	};
-});
 },{"./public/css/style.css":8,"./public/js/appRoutes":9,"./public/js/controllers/CommentCtrl":10,"./public/js/controllers/MainCtrl":11,"./public/js/controllers/UserCtrl":12,"./public/js/services/CommentService":13,"./public/js/services/UserService":14,"angular":5,"angular-route":3,"jquery":7}],2:[function(require,module,exports){
 /**
  * @license AngularJS v1.6.1

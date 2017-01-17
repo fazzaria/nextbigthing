@@ -1,37 +1,37 @@
 <!DOCTYPE html>
 <html>
-    <head>
-      <meta charset="UTF-8">
-      <link rel="stylesheet" src="css/style.css"/>
-      <script src="js/bundle.js"></script>
-      <base href="/">
-      <title>App</title>
-    </head>
-    <body ng-app="app" ng-controller="MainController">
-      <div class="container">
-        <nav class="navbar navbar-default">
-          <div class="container-fluid">
-            <div class="navbar-header">
-              <a class="navbar-brand" href="/">App</a>
-            </div>
-            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-              <ul class="nav navbar-nav">
-                <li class="active"><a href="/users">Users <span class="sr-only">(current)</span></a></li>
-                <li><a href="/comments">Comments</a></li>
-              </ul>
-              <form class="navbar-form navbar-left">
-                <div class="form-group">
-                  <input placeholder="Username" class="form-inline" type="text" ng-model="userLoginField">
-                  <input placeholder="Password" class="form-inline" type="text" ng-model="userPwdField">
-                </div>
-                <button ng-click="tryLogin()" class="btn btn-primary">Submit</button>
-              </form>
-            </div><!-- /.navbar-collapse -->
-          </div><!-- /.container-fluid -->
-        </nav>
-        <h2>The App</h2>
-        <hr>
-        <div ng-view></div>
-      </div>
-    </body>
+  <head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" src="css/style.css"/>
+    <script src="js/bundle.js"></script>
+    <base href="/">
+    <title>App</title>
+  </head>
+  <body ng-app="app" ng-controller="MainController">
+    <div class="container">
+      <nav class="navbar navbar-default">
+        <div class="container-fluid">
+          <div class="navbar-header">
+            <a class="navbar-brand" href="/">App</a>
+          </div>
+          <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav">
+              <li class="active"><a href="/users">Users <span class="sr-only">(current)</span></a></li>
+              <li><a href="/comments">Comments</a></li>
+            </ul>
+            <form class="navbar-form navbar-left">
+              <div class="form-group">
+                <input placeholder="Username" class="form-inline" type="text" ng-model="userLoginField">
+                <input placeholder="Password" class="form-inline" type="text" ng-model="userPwdField">
+              </div>
+              <button ng-click="tryLogin()" class="btn btn-primary">Submit</button>
+            </form>
+          </div><!-- /.navbar-collapse -->
+        </div><!-- /.container-fluid -->
+      </nav>
+      <h2>The App</h2>
+      <hr>
+      <div ng-view></div>
+    </div>
+  </body>
 </html>
