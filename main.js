@@ -1,65 +1,29 @@
-var $ = require('jquery');
 var angular = require('angular');
-var css = require('./public/style.css');
+var angularRoute = require('angular-route');
+var $ = require('jquery');
+var css = require('./public/css/style.css');
 
-var app = angular.module('app',[]);
+var app = angular.module('app', []);
+angular.module('app', [angularRoute]);
+
+require('./public/js/controllers/MainCtrl')();
+
+require('./public/js/controllers/UserCtrl')();
+require('./public/js/services/UserService')();
+
+require('./public/js/controllers/CommentCtrl')();
+require('./public/js/services/CommentService')();
+
+require('./public/js/appRoutes')();
+
+angular.module('app', ['ngRoute', 'appRoutes', 'MainCtrl', 'UserCtrl', 'UserService', 'CommentCtrl', 'CommentService']);
 
 app.config(function ($httpProvider) {
     $httpProvider.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded; charset=UTF-8';
-    $httpProvider.defaults.transformRequest = function(data){
+    $httpProvider.defaults.transformRequest = function(data) {
         if (data === undefined) {
             return data;
         }
         return $.param(data);
-    }
+	};
 });
-
-app.controller('CommentsController', ['$scope', '$http', function($scope, $http) {
-    $scope.comments = [], $scope.postText = "", $scope.userLoginField = "", $scope.userPwdField = "";
-
-    $scope.tryLogin = function() {
-
-    };
-
-    function refreshComments(data) {
-        $http.post("/getComments", data).then(
-            function successCallback(response) {
-                $scope.comments = response.data;
-            }, 
-            function errorCallback(response) {
-                console.log(response);
-            }
-        );
-    }
-
-    $scope.loadComments = function() {
-        var data = {
-            test: "test1"
-        };
-        refreshComments(data);
-    };
-
-    $scope.postComment = function() {
-        var data = {
-            content: $scope.postText
-        };
-        if($scope.postText.length > 0) {
-            $http.post("/postComment", data).then(
-                function successCallback(response) {
-                    var data2 = [{ test: "test1" }];
-                    refreshComments(data2);
-                    $scope.postText = "";
-                }, 
-                function errorCallback(response) {
-                    console.log(response);
-                }
-            );
-        }
-    };
-    $("#commentField").on("keypress", function(e) {
-        if (e.which == 13) {
-            $scope.postComment();
-        }
-    })
-}]);
-

@@ -2,33 +2,36 @@
 <html>
     <head>
       <meta charset="UTF-8">
-      <link rel="stylesheet" src="style.css"/>
+      <link rel="stylesheet" src="css/style.css"/>
+      <script src="js/bundle.js"></script>
+      <base href="/">
       <title>App</title>
     </head>
-    <body ng-app="app">
-      <div ng-controller="CommentsController" class="container">
-          <div class="pull-right">
-            <label>Login: </label>
-            <input placeholder="Username" class="form-inline" type="text" ng-model="userLoginField">
-            <input placeholder="Password" class="form-inline" type="text" ng-model="userPwdField">
-            <button ng-click="tryLogin()" class="btn btn-primary">Submit</button>
-          </div>
-          <h2>The App</h2>
-          <hr>
-          <div id="chatContainer">
-            <div class="comment" ng-repeat="comment in comments">
-              <div class="small"><p>{{comment.datePosted}}</p></div>
-              <p class="lead">{{comment.author}}: {{comment.content}}</p>
+    <body ng-app="app" ng-controller="MainController">
+      <div class="container">
+        <nav class="navbar navbar-default">
+          <div class="container-fluid">
+            <div class="navbar-header">
+              <a class="navbar-brand" href="/">App</a>
             </div>
-          </div>
-          <div class="row">
-            <div class="col-md-6">
-              <input id="commentField" class="form-inline" placeholder="Enter comments here" ng-model="postText" type="text">
-              <button class="btn btn-primary btn-small form-inline" ng-click="loadComments()">Load Comments</button>
-              <button class="btn btn-primary btn-small form-inline" id="postButton" ng-click="postComment()">Post Comment</button>
-            </div>
-          </div>
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+              <ul class="nav navbar-nav">
+                <li class="active"><a href="/users">Users <span class="sr-only">(current)</span></a></li>
+                <li><a href="/comments">Comments</a></li>
+              </ul>
+              <form class="navbar-form navbar-left">
+                <div class="form-group">
+                  <input placeholder="Username" class="form-inline" type="text" ng-model="userLoginField">
+                  <input placeholder="Password" class="form-inline" type="text" ng-model="userPwdField">
+                </div>
+                <button ng-click="tryLogin()" class="btn btn-primary">Submit</button>
+              </form>
+            </div><!-- /.navbar-collapse -->
+          </div><!-- /.container-fluid -->
+        </nav>
+        <h2>The App</h2>
+        <hr>
+        <div ng-view></div>
       </div>
     </body>
-    <script src="bundle.js"></script>
 </html>

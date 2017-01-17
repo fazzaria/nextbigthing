@@ -1,0 +1,15 @@
+<div>
+  <div id="chatContainer">
+    <div class="comment" ng-repeat="comment in comments">
+      <div class="small"><p>{{comment.datePosted}}</p></div>
+      <p class="lead">{{comment.author}}: {{comment.content}}</p>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <input id="commentField" class="form-inline" placeholder="Enter comments here" ng-model="postText" type="text">
+      <button class="btn btn-primary btn-small form-inline" ng-click="loadComments()">Load Comments</button>
+      <button class="btn btn-primary btn-small form-inline" id="postButton" ng-click="postComment()">Post Comment</button>
+    </div>
+  </div>
+</div>

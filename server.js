@@ -1,18 +1,17 @@
 var express = require('express');
-var app = express();
+var xapp = express();
 var bodyParser = require('body-parser');
 var methodOverride = require('method-override');
-var MongoClient = require('mongodb').MongoClient;
+//var MongoClient = require('mongodb').MongoClient;
 var mongoose = require('mongoose');
 //data source: https://mlab.com/databases/fazzaria
-//mao: whoever makes it through the day 
 
-app.use(bodyParser.json());
-app.use(bodyParser.json({ type: 'application/vnd.api+json' }));
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(methodOverride('X-HTTP-Method-Override'));
-//app.use(express.static(__dirname + '/public')); 
-require('./app/routes')(app); // configure our routes
+xapp.use(bodyParser.json());
+xapp.use(bodyParser.json({ type: 'application/vnd.api+json' }));
+xapp.use(bodyParser.urlencoded({ extended: true }));
+xapp.use(methodOverride('X-HTTP-Method-Override'));
+xapp.use(express.static(__dirname + '/public'));
+require('./app/routes')(xapp); // configure our routes
 
 var config = require('./config/db');
 
@@ -24,19 +23,19 @@ db.on('error', console.error.bind(console, 'connection error:'));
 
 db.once('open', function() {
 
-	app.post("/api/register", function(req, res) {
+	xapp.post("/api/register", function(req, res) {
 
 	});
 
-	app.post("/api/login", function(req, res) {
+	xapp.post("/api/login", function(req, res) {
 
 	});
 
-	app.get("/api/USERID", function(req, res) {
+	xapp.get("/api/USERID", function(req, res) {
 
 	});
 
-	app.post('/getComments', function(req, res) {
+	xapp.post('/getComments', function(req, res) {
 		var comments = db.collection("Comments").find().toArray(function(err, results) {
 			if (err) {
 				console.log("err");
@@ -46,7 +45,7 @@ db.once('open', function() {
 		});
 	});
 
-	app.post('/postComment', function(req, res) {
+	xapp.post('/postComment', function(req, res) {
 		//validations and things
 		if (req.body.content != "") {
 			var comment = req.body;
@@ -63,7 +62,7 @@ db.once('open', function() {
 
 	var port = process.env.PORT || 8081;
 
-  	app.listen(port, function() {
-		console.log("App running on port", port + ".", "Godspeed.");
+  	xapp.listen(port, function() {
+		console.log("App running on port", port + ".");
 	});
 });

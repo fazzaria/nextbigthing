@@ -5,12 +5,13 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "watchify -t browserify-css main.js > bundle.js main.js -o public/bundle.js | nodemon server"
+    "start": "watchify -t browserify-css main.js > bundle.js main.js -o public/js/bundle.js -v | nodemon server"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "angular": "^1.6.1",
+    "angular-route": "^1.6.1",
     "body-parser": "^1.15.2",
     "bootstrap": "^3.3.7",
     "express": "^4.14.0",
