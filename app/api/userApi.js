@@ -1,5 +1,4 @@
 var User = require('../models/user');
-var router = require('express').Router;
 
 var userApi = function(router) {
     router.route('/users')
@@ -8,16 +7,17 @@ var userApi = function(router) {
             var user = new User();
             console.log(req.body);
             user.UserName = req.body.UserName;
-            user.Pwd = req.body.Pwd;
             user.DisplayName = req.body.UserName;
-            if (user.UserName = "nope") {
-                res.status(500).send('Something broke!');
+            user.Pwd = req.body.Pwd;
+            user.DateRegistered = new Date();
+            if (user.UserName == "nope") {
+                return res.status(500).send('Something broke!');
             }
             user.save(function(err) {
                 if (err) {
                     res.send(err);
                 }
-                res.json({ message: 'User created!' });
+                return res.json({ message: 'User created!' });
             });
         })
         .get(function(req, res) {

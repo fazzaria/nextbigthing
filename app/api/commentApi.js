@@ -1,5 +1,4 @@
 var Comment = require('../models/comment');
-var router = require('express').Router;
 
 var commentApi = function(router) {
     router.route('/comments')

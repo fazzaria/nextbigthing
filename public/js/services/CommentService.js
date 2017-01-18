@@ -3,7 +3,16 @@ var CommentService = function() {
         return {
             // call to get all comments
             get: function() {
-                return $http.get('/api/comments');
+                return $http.get('/api/comments')
+                    .then(function(success) {
+                        console.log(success);
+                        return success;
+                    },
+                    function(err) {
+                        console.log(err);
+                        return err;
+                    }
+                );
             },
 
             // call to POST and create a new comment

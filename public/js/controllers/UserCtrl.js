@@ -18,15 +18,6 @@ var UserCtrl = function() {
 				$scope.feedback = err;
 			});
     	};
-        $scope.test = function() {
-            User.get({}).then(function(success) {
-                console.log(success);
-                $scope.comments = success;
-                $scope.feedback = "";
-            }, function(err) {
-                $scope.feedback = err;
-            });
-        };
 	});
 };
 

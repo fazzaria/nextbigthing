@@ -4,7 +4,7 @@ var angularRoute = require('angular-route');
 var $ = require('jquery');
 var jQuery = require('jquery');
 window.$ = window.jQuery = jQuery;
-
+//STALIN FOR TIME: A Chatroom-Based Game of Political Correctness
 require('bootstrap');
 
 jQuery.noConflict(true);
@@ -46970,11 +46970,11 @@ var angular = require('angular');
 
 var CommentCtrl = function(app) {
     angular.module('CommentCtrl', []).controller('CommentController', function($scope, Comment) {
-        $scope.comments = [], $scope.Content = "", $scope.Author = "Test";
+        $scope.comments = [], $scope.postText = "", $scope.Author = "Test";
         $scope.loadComments = function() {
             Comment.get().then(function(success) {
                 console.log(success);
-                $scope.comments = success;
+                $scope.comments = success.data;
                 $scope.feedback = "";
             }, function(err) {
                 $scope.feedback = err;
@@ -46982,10 +46982,10 @@ var CommentCtrl = function(app) {
         };
         $scope.postComment = function() {
             Comment.create({
-                Content: $scope.Content,
+                Content: $scope.postText,
                 Author: $scope.Author
             }).then(function(success) {
-                $scope.Content = "";
+                $scope.postText = "";
                 $scope.feedback = "";
                 $scope.loadComments();
             }, function(err) {
@@ -47033,15 +47033,6 @@ var UserCtrl = function() {
 				$scope.feedback = err;
 			});
     	};
-        $scope.test = function() {
-            User.get({}).then(function(success) {
-                console.log(success);
-                $scope.comments = success;
-                $scope.feedback = "";
-            }, function(err) {
-                $scope.feedback = err;
-            });
-        };
 	});
 };
 
@@ -47052,7 +47043,16 @@ var CommentService = function() {
         return {
             // call to get all comments
             get: function() {
-                return $http.get('/api/comments');
+                return $http.get('/api/comments')
+                    .then(function(success) {
+                        console.log(success);
+                        return success;
+                    },
+                    function(err) {
+                        console.log(err);
+                        return err;
+                    }
+                );
             },
 
             // call to POST and create a new comment

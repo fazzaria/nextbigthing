@@ -3,7 +3,7 @@ var angularRoute = require('angular-route');
 var $ = require('jquery');
 var jQuery = require('jquery');
 window.$ = window.jQuery = jQuery;
-
+//STALIN FOR TIME: A Chatroom-Based Game of Political Correctness
 require('bootstrap');
 
 jQuery.noConflict(true);
