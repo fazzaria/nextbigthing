@@ -11,7 +11,7 @@ jQuery.noConflict(true);
 var css = require('./public/css/style.css');
 
 var app = angular.module('app', []);
-angular.module('app', [angularRoute]);
+angular.module('app', [angularRoute, '$qProvider']);
 
 app.config(function ($httpProvider) {
     $httpProvider.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded; charset=UTF-8';
@@ -46939,27 +46939,43 @@ var angular = require('angular');
 //var angular = require('angular-route');
 
 var appRoutes = function() {
-    angular.module('appRoutes', []).config(['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider) {
+    angular.module('appRoutes', []).config(['$routeProvider', '$locationProvider', '$qProvider', function($routeProvider, $locationProvider, $qProvider) {
+        console.log($qProvider);
+        var onlyLoggedIn = function($location, $qProvider, Auth) {
+            var deferred = $qProvider.defer();
+            if(Auth.isLoggedIn()) {
 
-    $routeProvider
-        // home page
-        .when('/', {
-            templateUrl: 'views/home.html',
-            controller: 'MainController'
-        })
-        // users page that will use the UserController
-        .when('/users', {
-            templateUrl: 'views/user.html',
-            controller: 'UserController'
-        })
-        // comments page that will use the CommentController
-        .when('/comments', {
-            templateUrl: 'views/comment.html',
-            controller: 'CommentController'
-        })
-        .otherwise({templateUrl:'views/404.html'}); // Render 404 view;
+            }
+            else console.log("onlyLoggedIn");
+        };
 
-    $locationProvider.html5Mode(true);
+        $routeProvider
+            .when('/', {
+                templateUrl: 'views/home.html',
+                controller: 'MainController'
+            })
+            .when('/users', {
+                templateUrl: 'views/user.html',
+                controller: 'UserController'
+            })
+            .when('/comments', {
+                templateUrl: 'views/comment.html',
+                controller: 'CommentController'
+            })
+            .when('/about', {
+                templateUrl: 'views/about.html'
+            })
+            .when('/register', {
+                templateUrl: 'views/register.html'
+            })
+            .when('/settings', {
+                templateUrl: 'views/settings.html',
+                resolve:{loggedIn: onlyLoggedIn}
+            })
+            .otherwise({templateUrl:'views/404.html'}); // Render 404 view;
+
+        $locationProvider.html5Mode(true);
+
     }]);
 };
 
@@ -47006,8 +47022,18 @@ module.exports = CommentCtrl;
 var angular = require('angular');
 
 var MainCtrl = function() {
-	angular.module('MainCtrl', []).controller('MainController', function($scope) {
-    	$scope.testtext = 'Test';
+	angular.module('MainCtrl', []).controller('MainController', function($scope, $location) {
+    	$scope.tryLogin = function() {
+    		//auto log in
+    		$scope.loggedIn = !$scope.loggedIn;
+    	};
+    	$scope.logout = function() {
+    		//auto log out
+    		$scope.loggedIn = !$scope.loggedIn;
+    	};
+    	$scope.register = function() {
+    		$location.url("/register");
+    	};
 	});
 };
 

@@ -1,6 +1,6 @@
 var path = require('path');
 
-var routes = function(app) {
+var routes = function() {
 	
 	var router = require('express').Router();
 
@@ -16,7 +16,7 @@ var routes = function(app) {
 	require('./api/userApi')(router);
 	require('./api/commentApi')(router);
 
-	app.use('/api', router);
+	return router;
 
 };
 

@@ -1,9 +1,12 @@
 var express        = require('express');
 var app            = express();
 var bodyParser     = require('body-parser');
+//var cookieParser   = require('cookie-parser');
 var methodOverride = require('method-override');
 var mongoose       = require('mongoose');
 var path           = require('path');
+var passport       = require('passport');
+var jwt            = require('express-jwt');
 
 app.use(bodyParser.json());
 app.use(bodyParser.json({ type: 'application/vnd.api+json' }));
@@ -12,11 +15,36 @@ app.use(methodOverride('X-HTTP-Method-Override'));
 
 app.use(express.static(__dirname + '/public'));
 
-var routes = require('./app/routes')(app); // configure our routes
+require('./app/models/user');
+
+// ROUTING ================================================== |
+
+var routes = require('./app/routes'); // configure our routes
+
+//user auth functions
+require('./app/api/config/passport')();
+app.use(passport.initialize());
+app.use('/api', routes());
+
+var auth = jwt({
+	secret: 'password',
+	userProperty: 'payload'
+});
+var settingsCtrl = require('./app/api/controllers/settingsCtrl');
+app.get('/settings', auth, settingsCtrl.settingsRead);
 
 app.get('*', function(req, res) {
     res.sendFile(path.join(__dirname, './public/index.html'));
 });
+
+app.use(function (err, req, res, next) {
+	if (err.name === 'UnauthorizedError') {
+		res.status(401);
+		res.json({"message" : err.name + ": " + err.message});
+	}
+});
+
+// END ROUTING ============================================== |
 
 var config = require('./config/db');
 

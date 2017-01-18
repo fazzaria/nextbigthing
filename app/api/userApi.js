@@ -1,4 +1,5 @@
-var User = require('../models/user');
+var mongoose = require('mongoose');
+var User = mongoose.model('User');
 
 var userApi = function(router) {
     router.route('/users')

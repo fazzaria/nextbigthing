@@ -10,7 +10,7 @@ jQuery.noConflict(true);
 var css = require('./public/css/style.css');
 
 var app = angular.module('app', []);
-angular.module('app', [angularRoute]);
+angular.module('app', [angularRoute, '$qProvider']);
 
 app.config(function ($httpProvider) {
     $httpProvider.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded; charset=UTF-8';
