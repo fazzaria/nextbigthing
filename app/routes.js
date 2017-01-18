@@ -1,29 +1,28 @@
-var User = require('./models/user');
 var path = require('path');
 
 var routes = function(app) {
 
-    // server routes ===========================================================
-    // handle things like api calls
-    // authentication routes
+	var router = require('express').Router();
 
-    // sample api route
-    app.get('/api/users', function(req, res) {
-        // use mongoose to get all nerds in the database
-        User.find(function(err, users) {
+	router.get('/', function(req, res) {
+		return res.status(200).json({message: 'connected!'});
+	});
 
-            if (err)
-                res.send(err);
+	router.use(function(req, res, next) {
+		console.log('api request received', req.body);
+		next();
+	});
 
-            res.json(users);
-        });
-    });
+	router.get('/', function(req, res) {
+		res.json({message: "api is working."});
+	});
 
-    // route to handle creating goes here (app.post)
-    // route to handle delete goes here (app.delete)
-    
+	app.use('/api', router);
+
+	require('./api/userApi');
+	require('./api/commentApi');
     app.get('/', function(req, res) {
-        res.sendFile(path.join(__dirname, '../public/index.html')); // load our public/index.html file
+        res.sendFile(path.join(__dirname, '../public/index.html'));
     });
 };
 

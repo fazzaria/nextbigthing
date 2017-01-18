@@ -1,8 +1,12 @@
 var angular = require('angular');
 var angularRoute = require('angular-route');
 var $ = require('jquery');
-window.jQuery = $;
-//var bootstrap = require('bootstrap');
+var jQuery = require('jquery');
+window.$ = window.jQuery = jQuery;
+
+require('bootstrap');
+
+jQuery.noConflict(true);
 var css = require('./public/css/style.css');
 
 var app = angular.module('app', []);
@@ -29,3 +33,5 @@ require('./public/js/services/CommentService')();
 require('./public/js/appRoutes')();
 
 angular.module('app', ['ngRoute', 'appRoutes', 'MainCtrl', 'UserCtrl', 'UserService', 'CommentCtrl', 'CommentService']);
+
+require('./public/js/ui')();

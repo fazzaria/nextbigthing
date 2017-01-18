@@ -1,8 +1,8 @@
 var CommentService = function() {
     angular.module('CommentService', []).factory('Comment', ['$http', function($http) {
         return {
-            // call to get all comment
-            get : function() {
+            // call to get all comments
+            get: function() {
                 return $http.get('/api/comments');
             },
 

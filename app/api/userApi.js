@@ -1,14 +1,18 @@
-var User = require('../app/models/user');
+var User = require('../models/user');
+var router = require('express').Router;
 
 var userApi = function(router) {
     router.route('/users')
-        // create a bear (accessed at POST http://localhost:8081/api/users)
-        .post(function(req, res) {
+        // create a user (accessed at POST http://localhost:8081/api/users)
+        .post(function(req, res, next) {
             var user = new User();
             console.log(req.body);
             user.UserName = req.body.UserName;
             user.Pwd = req.body.Pwd;
             user.DisplayName = req.body.UserName;
+            if (user.UserName = "nope") {
+                res.status(500).send('Something broke!');
+            }
             user.save(function(err) {
                 if (err) {
                     res.send(err);
@@ -18,8 +22,9 @@ var userApi = function(router) {
         })
         .get(function(req, res) {
             User.find(function(err, users) {
-                if (err)
+                if (err) {
                     res.send(err);
+                }
 
                 res.json(users);
             });

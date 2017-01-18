@@ -19,7 +19,8 @@ var appRoutes = function() {
         .when('/comments', {
             templateUrl: 'views/comment.html',
             controller: 'CommentController'
-        });
+        })
+        .otherwise({templateUrl:'views/404.html'}); // Render 404 view;
 
     $locationProvider.html5Mode(true);
     }]);
