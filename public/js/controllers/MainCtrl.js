@@ -1,5 +1,3 @@
-var angular = require('angular');
-
 var MainCtrl = function() {
 	angular.module('MainCtrl', []).controller('MainController', function($scope, $location) {
     	$scope.tryLogin = function() {

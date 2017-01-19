@@ -1,16 +1,6 @@
-var angular = require('angular');
-//var angular = require('angular-route');
-
 var appRoutes = function() {
-    angular.module('appRoutes', []).config(['$routeProvider', '$locationProvider', '$qProvider', function($routeProvider, $locationProvider, $qProvider) {
-        console.log($qProvider);
-        var onlyLoggedIn = function($location, $qProvider, Auth) {
-            var deferred = $qProvider.defer();
-            if(Auth.isLoggedIn()) {
 
-            }
-            else console.log("onlyLoggedIn");
-        };
+    angular.module('appRoutes', []).config(['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider) {
 
         $routeProvider
             .when('/', {
@@ -32,13 +22,12 @@ var appRoutes = function() {
                 templateUrl: 'views/register.html'
             })
             .when('/settings', {
-                templateUrl: 'views/settings.html',
-                resolve:{loggedIn: onlyLoggedIn}
+                templateUrl: 'views/settings.html'/*,
+                resolve:{loggedIn: onlyLoggedIn}*/
             })
             .otherwise({templateUrl:'views/404.html'}); // Render 404 view;
 
         $locationProvider.html5Mode(true);
-
     }]);
 };
 

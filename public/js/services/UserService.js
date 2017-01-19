@@ -1,5 +1,3 @@
-var angular = require('angular');
-
 var UserService = function() {
     angular.module('UserService', []).factory('User', ['$http', function($http) {
         return {
