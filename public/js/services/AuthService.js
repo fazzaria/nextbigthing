@@ -1,69 +1,66 @@
-var setupAuth = function() {
-    angular.module('app').service('authentication', authentication);
+module.exports = function($http, $window) {
+    var saveToken = function (token) {
+        $window.localStorage['StalinForTime-token'] = token;
+    };
 
-    authentication.$inject = ['$http', '$window'];
+    var getToken = function () {
+        return $window.localStorage['StalinForTime-token'];
+    };
 
-    function authentication ($http, $window) {
-        var saveToken = function (token) {
-            $window.localStorage['StalinForTime-token'] = token;
-        };
+    var isLoggedIn = function() {
+        var token = getToken();
+        var payload;
 
-        var getToken = function () {
-            return $window.localStorage['StalinForTime-token'];
-        };
+        if(token) {
+            payload = token.split('.')[1];
+            payload = $window.atob(payload);
+            payload = JSON.parse(payload);
+            
+            return payload.exp > Date.now() / 1000;
+        } else {
+            return false;
+        }
+    };
 
-        var isLoggedIn = function() {
+    var currentUser = function() {
+        if (isLoggedIn()) {
             var token = getToken();
-            var payload;
+            var payload = token.split('.')[1];
+            payload = $window.atob(payload);
+            payload = JSON.parse(payload);
+            return {
+                UserName: payload.UserName,
+                DisplayName: payload.DisplayName
+            };
+        }
+    };
 
-            if(token) {
-                payload = token.split('.')[1];
-                payload = $window.atob(payload);
-                payload = JSON.parse(payload);
-                
-                return payload.exp > Date.now() / 1000;
-            } else {
-                return false;
-            }
-        };
+    logout = function() {
+        $window.localStorage.removeItem('StalinForTime-token');
+    };
 
-        var currentUser = function() {
-            if (isLoggedIn()) {
-                var token = getToken();
-                var payload = token.split('.')[1];
-                payload = $window.atob(payload);
-                payload = JSON.parse(payload);
-                return {
-                    UserName: payload.UserName,
-                    DisplayName: payload.DisplayName
-                };
-            }
-        };
+    login = function(user) {
+        return $http.post('/api/login', user).then(function(success) {
+            console.log("success", success);
+            saveToken(success.token);
+        }, function(err) {
+            console.log("err", err);
+        });
+    };
 
-        logout = function() {
-            $window.localStorage.removeItem('StalinForTime-token');
-        };
+    register = function(user) {
+        return $http.post('/api/register', user).success(function(data) {
+            saveToken(data.token);
+        });
+    };
 
-        register = function(user) {
-            return $http.post('/api/register', user).success(function(data) {
-                saveToken(data.token);
-            });
-        };
-
-        login = function(user) {
-            return $http.post('/api/login', user).success(function(data) {
-                saveToken(data.token);
-            });
-        };
-
-        return {
-            saveToken: saveToken,
-            getToken: getToken,
-            logout: logout,
-            isLoggedIn: isLoggedIn,
-            currentUser: currentUser
-        };
+    return {
+        saveToken: saveToken,
+        getToken: getToken,
+        isLoggedIn: isLoggedIn,
+        currentUser: currentUser,
+        logout: logout,
+        login: login,
+        register: register
     };
 };
-
-module.exports = setupAuth;

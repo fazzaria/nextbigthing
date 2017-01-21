@@ -3,11 +3,12 @@ var LocalStrategy = require('passport-local').Strategy;
 var mongoose = require('mongoose');
 var User = mongoose.model('User');
 
-var configPassport = function() {
+module.exports = function() {
 	passport.use(new LocalStrategy({
 		usernameField: 'UserName'
 		},
 		function(username, password, done) {
+			console.log('passport working');
 			User.findOne({ UserName: username }, function(err, user) {
 				if (err) {
 					return done(err);
@@ -30,5 +31,3 @@ var configPassport = function() {
 		}
 	));
 };
-
-module.exports = configPassport;

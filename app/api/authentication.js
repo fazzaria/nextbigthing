@@ -3,6 +3,7 @@ var mongoose = require('mongoose');
 var User = mongoose.model('User');
 
 module.exports.register = function(req, res) {
+	console.log("authentication api hit!", req.body);
 	var user = new User();
 	user.UserName = req.body.UserName;
 	user.DisplayName = req.body.DisplayName;
@@ -24,6 +25,7 @@ module.exports.register = function(req, res) {
 };
 
 module.exports.login = function(req, res) {
+	console.log("authentication api hit!", req.body);
 	passport.authenticate('local', function(err, user, info) {
 		var token;
 

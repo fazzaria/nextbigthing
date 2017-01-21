@@ -1,16 +1,11 @@
+//STALIN FOR TIME: A Chatroom-Based Game of Political Correctness
 var angular = require('angular');
 var angularRoute = require('angular-route');
 var $ = require('jquery');
-var jQuery = require('jquery');
-window.$ = window.jQuery = jQuery;
-//STALIN FOR TIME: A Chatroom-Based Game of Political Correctness
-require('bootstrap');
 
-jQuery.noConflict(true);
 var css = require('./public/css/style.css');
 
-angular.module('app', [angularRoute]);
-var app = angular.module('app', []);
+var app = angular.module('app', [angularRoute]);
 
 app.config(function ($httpProvider) {
     $httpProvider.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded; charset=UTF-8';
@@ -22,20 +17,24 @@ app.config(function ($httpProvider) {
 	};
 });
 
-require('./public/js/controllers/MainCtrl')();
+//angular services and factories
+var AuthService = require('./public/js/services/AuthService');
+app.service('AuthService', ['$http', '$window', AuthService]);
+var UserFactory = require('./public/js/services/UserFactory');
+app.factory('UserFactory', ['$http', UserFactory]);
+var CommentFactory = require('./public/js/services/CommentFactory');
+app.factory('CommentFactory', ['$http', CommentFactory]);
 
-require('./public/js/controllers/UserCtrl')();
-require('./public/js/services/UserService')();
+//angular controllers
+var MainCtrl = require('./public/js/controllers/MainCtrl');
+app.controller('MainCtrl', ['$scope', '$location', 'AuthService', MainCtrl]);
+var UserCtrl = require('./public/js/controllers/UserCtrl');
+app.controller('UserCtrl', ['$scope', 'UserFactory', 'AuthService', UserCtrl]);
+var CommentCtrl = require('./public/js/controllers/CommentCtrl');
+app.controller('CommentCtrl', ['$scope', 'CommentFactory', CommentCtrl]);
 
-require('./public/js/controllers/CommentCtrl')();
-require('./public/js/services/CommentService')();
-
-require('./public/js/services/AuthService')();
-
-require('./public/js/appRoutes')();
-
-angular.module('app', ['authentication']);
-
-angular.module('app', ['ngRoute', 'appRoutes', 'MainCtrl', 'UserCtrl', 'UserService', 'CommentCtrl', 'CommentService']);
+//initialize routes
+var AppRoutes = require('./public/js/appRoutes');
+app.config(['$routeProvider', '$locationProvider', AppRoutes]);
 
 require('./public/js/ui')();

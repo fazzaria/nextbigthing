@@ -1,7 +1,7 @@
 var mongoose = require('mongoose');
 var User = mongoose.model('User');
 
-var userApi = function(router) {
+module.exports = function(router) {
     router.route('/users')
         // create a user (accessed at POST http://localhost:8081/api/users)
         .post(function(req, res, next) {
@@ -80,5 +80,3 @@ var userApi = function(router) {
         }
     );
 };
-
-module.exports = userApi;
