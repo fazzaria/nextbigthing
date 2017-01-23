@@ -7,6 +7,18 @@ module.exports = function($http, $window) {
         return $window.localStorage['StalinForTime-token'];
     };
 
+    var userExists = function(UserName) {
+        return UserFactory.get(UserName).then(function(success) {
+            if (!success.data) {
+                return false;
+            } else {
+                return true;   
+            }
+        }, function(err) {
+            console.log("user exists error", err);
+        });
+    };
+
     var isLoggedIn = function() {
         var token = getToken();
         var payload;
@@ -28,20 +40,17 @@ module.exports = function($http, $window) {
             var payload = token.split('.')[1];
             payload = $window.atob(payload);
             payload = JSON.parse(payload);
-            return {
-                UserName: payload.UserName,
-                DisplayName: payload.DisplayName
-            };
+            return payload;
         } else {
             return {};
         }
     };
 
-    logout = function() {
+    var logout = function() {
         $window.localStorage.removeItem('StalinForTime-token');
     };
 
-    login = function(user) {
+    var login = function(user) {
         return $http.post('/api/login', user).then(function(success) {
             saveToken(success.data.token);
         }, function(err) {
@@ -49,7 +58,7 @@ module.exports = function($http, $window) {
         });
     };
 
-    register = function(user) {
+    var register = function(user) {
         return $http.post('/api/register', user).then(function(success) {
             saveToken(success.data.token);
         }, function(err) {

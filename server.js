@@ -60,10 +60,13 @@ app.use(function (err, req, res, next) {
 // SOCKETS     ============================================== |
 
 //Listen for connection
+
+var Msg = require('./app/models/msg');
+
 io.on('connection', function(socket) {
 	//Globals
-	var defaultRoom = 'general';
-	var rooms = ["General", "angular", "socket.io", "express", "node", "mongo", "PHP", "laravel"];
+	var defaultRoom = 'General';
+	var rooms = ["General", "Bingo", "Stalin For Time"];
 
 	//Emit the rooms array
 	socket.emit('setup', {
@@ -82,7 +85,6 @@ io.on('connection', function(socket) {
 	//Listens for switch room
 	socket.on('switch room', function(data) {
 		//Handles joining and leaving rooms
-		//console.log(data);
 		socket.leave(data.oldRoom);
 		socket.join(data.newRoom);
 		io.in(data.oldRoom).emit('user left', data);
@@ -92,17 +94,28 @@ io.on('connection', function(socket) {
 	//Listens for a new chat message
 	socket.on('new message', function(data) {
 		//Create message
-		var newMsg = new Chat({
-			username: data.username,
-			content: data.message,
-			room: data.room.toLowerCase(),
-			created: new Date()
+		var newMsg = new Msg({
+			Author: data.userid,
+			Content: data.Content,
+			Room: data.room.toLowerCase(),
+			DatePosted: new Date()
 		});
 		//Save it to database
 		newMsg.save(function(err, msg) {
+			if (err) {
+				console.log(err);
+			}
 			//Send message to those connected in the room
 			io.in(msg.room).emit('message created', msg);
 		});
+	});
+
+	socket.on('test', function(data) {
+		data.test = defaultRoom;
+		//New user joins the default room
+		socket.join(defaultRoom);
+		//Tell all those in the room that a new user joined
+		io.in(defaultRoom).emit('alert', data);
 	});
 });
 

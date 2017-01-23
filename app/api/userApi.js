@@ -10,23 +10,22 @@ module.exports = function(router) {
             user.DisplayName = req.body.UserName;
             user.Pwd = req.body.Pwd;
             user.DateRegistered = new Date();
-            if (user.UserName == "nope") {
-                return res.status(500).send('Something broke!');
-            }
             user.save(function(err) {
                 if (err) {
                     res.send(err);
                 }
                 return res.json({ message: 'User created!' });
             });
-        })
+        }
+    );
+    router.route('/users/:UserName')
         .get(function(req, res) {
-            User.find(function(err, users) {
+            User.findOne(req.body, function(err, user) {
                 if (err) {
                     res.send(err);
                 }
 
-                res.json(users);
+                res.json(user);
             });
         }
     );

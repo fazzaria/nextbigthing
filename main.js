@@ -27,19 +27,24 @@ app.config(function ($httpProvider) {
 });
 
 //angular services and factories
-app.service('AuthService', ['$http', '$window', require('./public/js/services/AuthService')]);
 app.factory('UserFactory', ['$http', require('./public/js/services/UserFactory')]);
+app.service('AuthService', ['$http', '$window', 'UserFactory', require('./public/js/services/AuthService')]);
 
 //socket.io connection
-app.factory('mySocket', function (socketFactory) {
-  return socketFactory();
-}).factory('MsgFactory', ['$http', 'mySocket', require('./public/js/services/MsgFactory')]);
+var serverBaseUrl = 'http://localhost:8081';
+app.factory('chatSocket', function (socketFactory) {
+	var myIoSocket = io.connect(serverBaseUrl);
+  	var socket = socketFactory({
+        ioSocket: myIoSocket
+    });
+    return socket;
+}).factory('MsgFactory', ['$http', 'chatSocket', require('./public/js/services/MsgFactory')]);
 
 //angular controllers
 app.controller('MainCtrl', ['$scope', '$location', 'AuthService', require('./public/js/controllers/MainCtrl')]);
 app.controller('RegistrationCtrl', ['$scope', '$location', 'AuthService', require('./public/js/controllers/RegistrationCtrl')]);
 app.controller('SettingsCtrl', ['$scope', 'UserFactory', 'AuthService', require('./public/js/controllers/SettingsCtrl')]);
-app.controller('ChatCtrl', ['$scope', 'AuthService', 'MsgFactory', 'mySocket', require('./public/js/controllers/ChatCtrl')]);
+app.controller('ChatCtrl', ['$scope', 'AuthService', 'MsgFactory', 'chatSocket', require('./public/js/controllers/ChatCtrl')]);
 
 //initialize routes
 var AppRoutes = require('./public/js/appRoutes');

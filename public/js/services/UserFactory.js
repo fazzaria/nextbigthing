@@ -1,10 +1,11 @@
 module.exports = function($http) {
     return {
-        // call to get all users
-        get: function() {
-            return $http.get('/api/users')
+        // call to get user by UserName
+        get: function(UserName) {
+            console.log("userfactory get", UserName);
+            return $http.get('/api/users/' + UserName)
                 .then(function(success) {
-                    console.log(success);
+                    console.log("user factory get success", success);
                     return success;
                 },
                 function(err) {

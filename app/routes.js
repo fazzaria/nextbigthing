@@ -12,8 +12,8 @@ module.exports = function() {
 		res.json({message: "api is working."});
 	});
 
-	require('./api/userApi')(router);
 	require('./api/msgApi')(router);
+	require('./api/userApi')(router);
 
 	var auth = require('./api/authentication');
 	router.route('/login').post(auth.login);

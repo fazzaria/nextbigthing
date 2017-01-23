@@ -3,7 +3,7 @@ var Schema = mongoose.Schema;
 
 var MsgSchema = new Schema({
 	Content: String,
-	Author: String,
+	Author: { type: Schema.Types.ObjectId, ref: 'User' },
 	DatePosted: Date
 });
 

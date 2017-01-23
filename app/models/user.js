@@ -36,6 +36,7 @@ UserSchema.methods.generateJwt = function() {
 		_id: this._id,
 		UserName: this.UserName,
 		DisplayName: this.DisplayName,
+		DateRegistered: this.DateRegistered,
 		exp: parseInt(expiry.getTime() / 1000)
 	}, "password");
 };

@@ -1,31 +1,33 @@
 var $ = require('jQuery');
-module.exports = function($scope, AuthService, MsgFactory, mySocket) {
+module.exports = function($scope, AuthService, MsgFactory, chatSocket) {
     $scope.msgs = [], $scope.postText = "";
+
     $scope.refreshMsgs = function() {
         MsgFactory.get().then(function(success) {
-            console.log(typeof(success.data[0].DatePosted));
             $scope.msgs = success.data;
             $scope.feedback = "";
         }, function(err) {
             $scope.feedback = err;
         });
     };
+
     $scope.postMsg = function() {
         var currentUser = AuthService.currentUser();
         if (currentUser) {
-            MsgFactory.create({
-                Content: $scope.postText,
-                Author: currentUser.DisplayName
-            }).then(function(success) {
-                $scope.postText = "";
-                $scope.feedback = "";
-            }, function(err) {
-                $scope.feedback = err;
-            });
+            var msg = {
+                userid: currentUser._id,
+                Content: $scope.postText
+            }
+            chatSocket.emit("new message", msg);
         } else {
             console.log("You are not signed in.");
         }
     };
+
+    chatSocket.on('message created', function() {
+        console.log("message created");
+        $scope.refreshMsgs();
+    })
 
     $("#commentField").on("keypress", function(e) {
         if (e.which == 13) {
