@@ -1,8 +1,8 @@
-module.exports = function($http) {
+module.exports = function($http, mySocket) {
     return {
-        // call to get all comments
+        // call to get all msgs
         get: function() {
-            return $http.get('/api/comments')
+            return $http.get('/api/msgs')
                 .then(function(success) {
                     console.log(success);
                     return success;
@@ -14,14 +14,14 @@ module.exports = function($http) {
             );
         },
 
-        // call to POST and create a new comment
-        create : function(userData) {
-            return $http.post('/api/comments', userData);
+        // call to POST and create a new msg
+        create : function(msgData) {
+            return $http.post('/api/msgs', msgData);
         },
 
-        // call to DELETE a comment
+        // call to DELETE a msg
         delete : function(id) {
-            return $http.delete('/api/comments/' + id);
+            return $http.delete('/api/msgs/' + id);
         }
     }
 };

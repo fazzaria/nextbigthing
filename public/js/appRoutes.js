@@ -5,23 +5,20 @@ module.exports = function($routeProvider, $locationProvider) {
             templateUrl: 'views/home.html',
             controller: 'MainCtrl'
         })
-        .when('/users', {
-            templateUrl: 'views/user.html',
-            controller: 'UserCtrl'
-        })
-        .when('/comments', {
-            templateUrl: 'views/comment.html',
-            controller: 'CommentCtrl'
+        .when('/chat', {
+            templateUrl: 'views/chat.html',
+            controller: 'ChatCtrl'
         })
         .when('/about', {
             templateUrl: 'views/about.html'
         })
         .when('/register', {
-            templateUrl: 'views/register.html'
+            templateUrl: 'views/register.html',
+            controller: 'RegistrationCtrl'
         })
         .when('/settings', {
-            templateUrl: 'views/settings.html'/*,
-            resolve:{loggedIn: onlyLoggedIn}*/
+            templateUrl: 'views/settings.html',
+            controller: 'SettingsCtrl'
         })
         .otherwise({templateUrl:'views/404.html'}); // Render 404 view;
 

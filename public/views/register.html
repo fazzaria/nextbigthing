@@ -1,4 +1,7 @@
 <p>Sign up here.</p>
-<input type="text">
-<input type="text">
-<input type="text">
+<form ng-submit="tryRegister()">
+<input placeholder="Username" type="text" ng-model="registerUser.UserName">
+<input placeholder="Display Name" type="text" ng-model="registerUser.DisplayName">
+<input placeholder="Password" type="password" ng-model="registerUser.Pwd">
+<button type="submit" class="btn btn-success">Submit</button>
+</form>

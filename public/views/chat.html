@@ -1,0 +1,18 @@
+<div>
+  <div id="chatContainer">
+    <ul>
+      <li ng-repeat="msg in msgs">
+        {{msg.Author}} <span class="small">({{msg.DatePosted}})</span>: {{msg.Content}}
+      </li>
+    </ul>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <p>{{feedback}}</p>
+      <input id="commentField" class="form-inline" placeholder="Enter comments here" ng-model="postText" type="text">
+      <button class="btn btn-primary btn-small form-inline" ng-click="refreshMsgs()">Load Comments</button>
+      <button class="btn btn-primary btn-small form-inline" ng-click="postMsg()">Post Comment</button>
+    </div>
+  </div>
+</div>

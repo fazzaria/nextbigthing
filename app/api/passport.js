@@ -5,10 +5,10 @@ var User = mongoose.model('User');
 
 module.exports = function() {
 	passport.use(new LocalStrategy({
-		usernameField: 'UserName'
+		usernameField: 'UserName',
+		passwordField: 'Pwd'
 		},
 		function(username, password, done) {
-			console.log('passport working');
 			User.findOne({ UserName: username }, function(err, user) {
 				if (err) {
 					return done(err);

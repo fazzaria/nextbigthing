@@ -1,6 +1,6 @@
-var path = require('path');
+require('./models/user');
 
-var routes = function() {
+module.exports = function() {
 	
 	var router = require('express').Router();
 
@@ -13,7 +13,7 @@ var routes = function() {
 	});
 
 	require('./api/userApi')(router);
-	require('./api/commentApi')(router);
+	require('./api/msgApi')(router);
 
 	var auth = require('./api/authentication');
 	router.route('/login').post(auth.login);
@@ -22,5 +22,3 @@ var routes = function() {
 	return router;
 
 };
-
-module.exports = routes;

@@ -1,24 +1,33 @@
 @import url("../../node_modules/bootstrap/dist/css/bootstrap.min.css");
 
-div#chatContainer {
-	margin-bottom: 20px;
+.view-animate-container {
+  position:relative;
+  height:200px!important;
+  background:white;
+  overflow:hidden;
 }
 
-div#chatContainer > div:nth-of-type(odd) {
-    background: #e0e0e0;
+.view-animate {
+  padding:10px;
 }
 
-div#chatContainer > div:last-of-type {
-    border-bottom-left-radius: 10px;
-    border-bottom-right-radius: 10px;
+.view-animate.ng-enter, .view-animate.ng-leave {
+  transition: all ease .25s;
+
+  position:absolute;
+  top:0;
+  left:0;
+  right:0;
+  bottom:0;
+  padding:10px;
 }
 
-div#chatContainer > div:first-of-type {
-    border-top-left-radius: 10px;
-    border-top-right-radius: 10px;
+.view-animate.ng-enter {
+  opacity: 0;
 }
-
-div#chatContainer > .comment {
-	box-sizing: content-box;
-    padding: 5px;
+.view-animate.ng-enter.ng-enter-active {
+  opacity: 100;
+}
+.view-animate.ng-leave.ng-leave-active {
+  opacity: 0;
 }

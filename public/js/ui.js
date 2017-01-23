@@ -1,6 +1,6 @@
 var $ = require('jQuery');
 
-var uiScripts = function() {
+module.exports = function() {
 	//some code to get the navbar links toggling active correctly
 	$(document).ready(function () {
         $('ul.nav > li').click(function() {
@@ -17,5 +17,3 @@ var uiScripts = function() {
         });
     });
 };
-
-module.exports = uiScripts;

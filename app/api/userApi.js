@@ -6,7 +6,6 @@ module.exports = function(router) {
         // create a user (accessed at POST http://localhost:8081/api/users)
         .post(function(req, res, next) {
             var user = new User();
-            console.log(req.body);
             user.UserName = req.body.UserName;
             user.DisplayName = req.body.UserName;
             user.Pwd = req.body.Pwd;

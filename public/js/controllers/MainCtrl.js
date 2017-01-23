@@ -1,11 +1,18 @@
 module.exports = function($scope, $location, AuthService) {
-	$scope.loginUser = {};
-	$scope.tryLogin = function() {
-		AuthService.login($scope.loginUser);
+	$scope.loginInfo = {};
+	$scope.currentUser = AuthService.currentUser();
+	$scope.loggedIn = AuthService.isLoggedIn();
+	$scope.tryLogin = function(loginInfo) {
+		AuthService.login($scope.loginInfo).then(function() {
+			$scope.loggedIn = AuthService.isLoggedIn();
+			$scope.loginInfo = {};
+		});
 	};
 	$scope.logout = function() {
-		//auto log out
-		$scope.loggedIn = !$scope.loggedIn;
+		AuthService.logout();
+		$scope.currentUser = AuthService.currentUser();
+		$scope.loggedIn = AuthService.isLoggedIn();
+		$location.url("/");
 	};
 	$scope.register = function() {
 		$location.url("/register");

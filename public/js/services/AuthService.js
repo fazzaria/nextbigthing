@@ -32,6 +32,8 @@ module.exports = function($http, $window) {
                 UserName: payload.UserName,
                 DisplayName: payload.DisplayName
             };
+        } else {
+            return {};
         }
     };
 
@@ -41,16 +43,17 @@ module.exports = function($http, $window) {
 
     login = function(user) {
         return $http.post('/api/login', user).then(function(success) {
-            console.log("success", success);
-            saveToken(success.token);
+            saveToken(success.data.token);
         }, function(err) {
-            console.log("err", err);
+            console.log("authservice login error", err);
         });
     };
 
     register = function(user) {
-        return $http.post('/api/register', user).success(function(data) {
-            saveToken(data.token);
+        return $http.post('/api/register', user).then(function(success) {
+            saveToken(success.data.token);
+        }, function(err) {
+            console.log(err);
         });
     };
 

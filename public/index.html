@@ -14,18 +14,19 @@
           <div class="collapse navbar-collapse">
             <ul class="nav navbar-nav">
               <li><a href="/">Home</a></li>
-              <li><a href="/users">Users<span class="sr-only">(current)</span></a></li>
-              <li><a href="/comments">Comments</a></li>
+              <li><a href="/about">About</a></li>
+              <li><a href="/chat">Chat</a></li>
             </ul>
-            <form ng-if="!loggedIn" class="navbar-form navbar-right">
+            <form ng-if="!loggedIn" ng-submit="tryLogin(loginInfo)" class="navbar-form navbar-right">
               <div class="form-group">
-                <input placeholder="Username" class="form-inline" type="text" ng-model="loginUser.UserName">
-                <input placeholder="Password" class="form-inline" type="text" ng-model="loginUser.Pwd">
+                <input placeholder="Username" class="form-inline" type="text" ng-model="loginInfo.UserName">
+                <input placeholder="Password" class="form-inline" type="password" ng-model="loginInfo.Pwd">
               </div>
-              <button ng-click="tryLogin()" class="btn btn-sm btn-primary">Login</button>
+              <button type="submit" class="btn btn-sm btn-primary">Login</button>
               <button ng-click="register()" class="btn btn-success btn-sm">Register</button>
             </form>
             <ul ng-if="loggedIn" class="nav navbar-nav navbar-right">
+              <li><a>Welcome, {{currentUser.DisplayName}}</a></li>
               <li><a href="/settings">Settings</a></li>
               <li><a href="#" ng-click="logout()">Sign Out</a></li>
             </ul>
@@ -36,7 +37,9 @@
       <input type="checkbox" ng-model="loggedIn">
       <h2>The App</h2>
       <hr>
-      <div ng-view></div>
+      <div class="view-animate-container">
+        <div ng-view class="view-animate"></div>
+      </div>
     </div>
   </body>
 </html>
