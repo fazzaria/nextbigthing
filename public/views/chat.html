@@ -1,18 +1,34 @@
 <div>
-  <div id="chatContainer">
-    <ul>
-      <li ng-repeat="msg in msgs">
-        {{msg.Author}} <span class="small">({{msg.DatePosted}})</span>: {{msg.Content}}
-      </li>
-    </ul>
+  <div ng-if="$parent.loggedIn">
+    <div ng-if="!currentRoom">
+      <h4>Select a room:</h4>
+      <ul class="list-group">
+        <li class="list-group-item" ng-repeat="room in rooms"><a href="#" ng-click="selectRoom(room)">{{room}}</a></li>
+      </ul>
+    </div>
+    <div ng-if="currentRoom" id="chatContainer">
+      <a href="#" ng-click="leaveRoom()">Leave Chat</a>
+      <ul class="list-group">
+        <li class="list-group-item" ng-repeat="msg in msgs">
+          {{msg.Author}} ({{msg.DatePosted}}): {{msg.Content}}
+        </li>
+      </ul>
+      <div class="row">
+        <div class="col-md-6">
+          <p>{{feedback}}</p>
+          <form>
+            <div class="input-group">
+              <input id="commentField" class="form-inline form-control" placeholder="Enter comments here" ng-model="postText" type="text">
+              <span class="input-group-btn">
+                <button type="submit" class="btn btn-primary btn-small form-inline" ng-click="postMsg()">Post Comment</button>
+              </span>
+            </div>
+          </form>
+        </div>
+      </div>
     </div>
   </div>
-  <div class="row">
-    <div class="col-md-6">
-      <p>{{feedback}}</p>
-      <input id="commentField" class="form-inline form-control" placeholder="Enter comments here" ng-model="postText" type="text">
-      <button class="btn btn-primary btn-small form-inline" ng-click="refreshMsgs()">Load Comments</button>
-      <button class="btn btn-primary btn-small form-inline" ng-click="postMsg()">Post Comment</button>
-    </div>
+  <div ng-if="!$parent.loggedIn">
+    <p>You must be logged in to start chatting.</p>
   </div>
 </div>

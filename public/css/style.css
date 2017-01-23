@@ -2,7 +2,8 @@
 
 .view-animate-container {
   position:relative;
-  height:200px!important;
+  height:100%!important;
+  min-height: 100%;
   background:white;
   overflow:hidden;
 }

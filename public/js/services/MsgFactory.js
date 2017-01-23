@@ -4,7 +4,6 @@ module.exports = function($http, mySocket) {
         get: function() {
             return $http.get('/api/msgs')
                 .then(function(success) {
-                    console.log(success);
                     return success;
                 },
                 function(err) {

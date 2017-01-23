@@ -62,11 +62,12 @@ app.use(function (err, req, res, next) {
 //Listen for connection
 
 var Msg = require('./app/models/msg');
+var User = require('./app/models/user');
 
 io.on('connection', function(socket) {
 	//Globals
 	var defaultRoom = 'General';
-	var rooms = ["General", "Bingo", "Stalin For Time"];
+	var rooms = ["General", "CSPAN Bingo", "Stalin For Time"];
 
 	//Emit the rooms array
 	socket.emit('setup', {
@@ -75,11 +76,18 @@ io.on('connection', function(socket) {
 
 	//Listens for new user
 	socket.on('new user', function(data) {
-		data.room = defaultRoom;
+		data.room = data.room;
 		//New user joins the default room
-		socket.join(defaultRoom);
+		socket.join(data.room);
 		//Tell all those in the room that a new user joined
-		io.in(defaultRoom).emit('user joined', data);
+		io.in(data.room).emit('user joined', data);
+	});
+
+	//Listens for leave room
+	socket.on('leave room', function(data) {
+		//Handles joining and leaving rooms
+		socket.leave(data.room);
+		io.in(data.room).emit('user left', data);
 	});
 
 	//Listens for switch room
@@ -94,10 +102,12 @@ io.on('connection', function(socket) {
 	//Listens for a new chat message
 	socket.on('new message', function(data) {
 		//Create message
+		console.log('new message');
+		User.findOne()
 		var newMsg = new Msg({
 			Author: data.userid,
 			Content: data.Content,
-			Room: data.room.toLowerCase(),
+			Room: data.Room,
 			DatePosted: new Date()
 		});
 		//Save it to database
@@ -105,8 +115,9 @@ io.on('connection', function(socket) {
 			if (err) {
 				console.log(err);
 			}
+			console.log(msg);
 			//Send message to those connected in the room
-			io.in(msg.room).emit('message created', msg);
+			io.in(msg.Room).emit('message created', msg);
 		});
 	});
 
