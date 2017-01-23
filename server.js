@@ -20,19 +20,18 @@ app.use(methodOverride('X-HTTP-Method-Override'));
 app.use(express.static(__dirname + '/public'));
 
 app.all('*', function(req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'Content-type,Accept,X-Access-Token,X-Key');
-  if (req.method == 'OPTIONS') {
-    res.status(200).end();
-  } else {
-    next();
-  }
+	res.header("Access-Control-Allow-Origin", "*");
+	res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
+	res.header('Access-Control-Allow-Headers', 'Content-type,Accept,X-Access-Token,X-Key');
+	if (req.method == 'OPTIONS') {
+		res.status(200).end();
+	} else {
+		next();
+	}
 });
 
 // ROUTING ================================================== |
 
-//require('./app/models/user');
 var routes = require('./app/routes'); // configure our routes
 
 //user auth functions

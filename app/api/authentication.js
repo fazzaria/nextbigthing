@@ -4,7 +4,7 @@ var User = mongoose.model('User');
 
 module.exports.register = function(req, res) {
 	var user = new User();
-	user.UserName = req.body.UserName;
+	user.UserName = req.body.UserName.toLowerCase();
 	user.DisplayName = req.body.DisplayName;
     user.DateRegistered = new Date();
 

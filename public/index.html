@@ -9,29 +9,33 @@
   </head>
   <body ng-app="app" ng-controller="MainCtrl">
     <div class="container">
-      <nav id="navbar" class="navbar navbar-default">
-        <div class="container-fluid">
-          <div class="collapse navbar-collapse">
+      <nav class="navbar navbar-default">
+        <div class="navbar-header"><a class="navbar-brand" href="/">Home</a>
+          <button class="navbar-toggle" data-toggle="collapse" data-target="#navCollapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+        </div>
+        <div id="navCollapse" class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
-              <li><a href="/">Home</a></li>
               <li><a href="/about">About</a></li>
               <li><a href="/chat">Chat</a></li>
             </ul>
             <form ng-if="!loggedIn" ng-submit="tryLogin(loginInfo)" class="navbar-form navbar-right">
               <div class="form-group">
-                <input placeholder="Username" class="form-inline" type="text" ng-model="loginInfo.UserName">
-                <input placeholder="Password" class="form-inline" type="password" ng-model="loginInfo.Pwd">
+                <input placeholder="Username" class="form-inline form-control" type="text" ng-model="loginInfo.UserName">
+                <input placeholder="Password" class="form-inline form-control" type="password" ng-model="loginInfo.Pwd">
               </div>
               <button type="submit" class="btn btn-sm btn-primary">Login</button>
-              <button ng-click="register()" class="btn btn-success btn-sm">Register</button>
+              <button type="button" ng-click="goRegister()" class="btn btn-success btn-sm">Register</button>
             </form>
             <ul ng-if="loggedIn" class="nav navbar-nav navbar-right">
-              <li><a>Welcome, {{currentUser.DisplayName}}</a></li>
+              <li><a>Welcome, {{currentUser.DisplayName || "(not logged in)"}}</a></li>
               <li><a href="/settings">Settings</a></li>
               <li><a href="#" ng-click="logout()">Sign Out</a></li>
             </ul>
-          </div><!-- /.navbar-collapse -->
-        </div><!-- /.container-fluid -->
+        </div>
       </nav>
       <label>Magically toggle logged-in UI: </label>
       <input type="checkbox" ng-model="loggedIn">
@@ -40,6 +44,9 @@
       <div class="view-animate-container">
         <div ng-view class="view-animate"></div>
       </div>
+    </div>
+    <div ng-if="feedbackVisible" id="fullShield" class="modal-backdrop fade in">
+      <h1 class="feedback">{{feedback}}</h1>
     </div>
   </body>
 </html>

@@ -1,14 +1,12 @@
 <div>
   <div ng-if="$parent.loggedIn">
-  	<h4>Account Settings for {{user.DisplayName || "(logged out)"}}</h4>
+  	<h4>Account Settings for {{$parent.currentUser.DisplayName || "(logged out)"}}</h4>
   	<p>{{feedback}}</p>
   	<form>
   		<label>Change display name:</label>
-  		<input type="text" placeholder="Display Name" ng-model="DisplayName"/>
-  	</form>
-  	<form>
+  		<input class="form-control" type="text" placeholder="Display Name" ng-model="DisplayName"/>
   		<label>Change Password:</label>
-  		<input type="text" placeholder="Password" ng-model="Pwd"/>
+  		<input class="form-control" type="text" placeholder="Password" ng-model="Pwd"/>
   	</form>
   	<button class="btn btn-md btn-danger" data-toggle="modal" data-target="#deleteWarning">Delete Account</button>
     <div class="modal fade" id="deleteWarning" tabindex="-1" role="dialog" aria-labelledby="deletionWarning">

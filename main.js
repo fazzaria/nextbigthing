@@ -4,6 +4,10 @@ var angularRoute   = require('angular-route');
 var angularAnimate = require('angular-animate');
 var $              = require('jquery');
 
+window.$ = $;
+window.jQuery = $;
+require('bootstrap');
+
 require('angular-socket-io');
 var io = require('socket.io-client');
 window.io = io;
@@ -23,28 +27,19 @@ app.config(function ($httpProvider) {
 });
 
 //angular services and factories
-var AuthService = require('./public/js/services/AuthService');
-app.service('AuthService', ['$http', '$window', AuthService]);
-var UserFactory = require('./public/js/services/UserFactory');
-app.factory('UserFactory', ['$http', UserFactory]);
+app.service('AuthService', ['$http', '$window', require('./public/js/services/AuthService')]);
+app.factory('UserFactory', ['$http', require('./public/js/services/UserFactory')]);
+
 //socket.io connection
-//var serverBaseUrl = 'http://localhost:8081';
 app.factory('mySocket', function (socketFactory) {
   return socketFactory();
-}).
-controller('ChatCtrl', function (mySocket) {
-
-});
-
+}).factory('MsgFactory', ['$http', 'mySocket', require('./public/js/services/MsgFactory')]);
 
 //angular controllers
-var MainCtrl = require('./public/js/controllers/MainCtrl');
-app.controller('MainCtrl', ['$scope', '$location', 'AuthService', MainCtrl]);
-var RegistrationCtrl = require('./public/js/controllers/RegistrationCtrl');
-app.controller('RegistrationCtrl', ['$scope', '$location', 'AuthService', RegistrationCtrl]);
-var SettingsCtrl = require('./public/js/controllers/SettingsCtrl');
-app.controller('SettingsCtrl', ['$scope', 'UserFactory', 'AuthService', SettingsCtrl]);
-
+app.controller('MainCtrl', ['$scope', '$location', 'AuthService', require('./public/js/controllers/MainCtrl')]);
+app.controller('RegistrationCtrl', ['$scope', '$location', 'AuthService', require('./public/js/controllers/RegistrationCtrl')]);
+app.controller('SettingsCtrl', ['$scope', 'UserFactory', 'AuthService', require('./public/js/controllers/SettingsCtrl')]);
+app.controller('ChatCtrl', ['$scope', 'AuthService', 'MsgFactory', 'mySocket', require('./public/js/controllers/ChatCtrl')]);
 
 //initialize routes
 var AppRoutes = require('./public/js/appRoutes');

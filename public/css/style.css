@@ -13,7 +13,6 @@
 
 .view-animate.ng-enter, .view-animate.ng-leave {
   transition: all ease .25s;
-
   position:absolute;
   top:0;
   left:0;
@@ -25,9 +24,18 @@
 .view-animate.ng-enter {
   opacity: 0;
 }
+
 .view-animate.ng-enter.ng-enter-active {
   opacity: 100;
 }
+
 .view-animate.ng-leave.ng-leave-active {
   opacity: 0;
+}
+
+#fullShield > .feedback {
+  color: #fff;
+  position: absolute;
+  bottom: 50%;
+  right: 50%;
 }

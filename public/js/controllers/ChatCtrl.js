@@ -1,5 +1,5 @@
 var $ = require('jQuery');
-module.exports = function($scope, AuthService, MsgFactory) {
+module.exports = function($scope, AuthService, MsgFactory, mySocket) {
     $scope.msgs = [], $scope.postText = "";
     $scope.refreshMsgs = function() {
         MsgFactory.get().then(function(success) {

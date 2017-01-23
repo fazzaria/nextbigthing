@@ -9,7 +9,7 @@ module.exports = function() {
 		passwordField: 'Pwd'
 		},
 		function(username, password, done) {
-			User.findOne({ UserName: username }, function(err, user) {
+			User.findOne({ UserName: username.toLowerCase() }, function(err, user) {
 				if (err) {
 					return done(err);
 				}

@@ -45,3 +45,7 @@ jspm_packages
 
 # Yarn Integrity file
 .yarn-integrity
+
+# Browserify bundles
+bundle.js
+public/js/bundle.js
