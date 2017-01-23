@@ -36,6 +36,7 @@
 #fullShield > .feedback {
   color: #fff;
   position: absolute;
-  bottom: 50%;
-  right: 50%;
+  bottom: 75%;
+  width: 100%;
+  text-align: center;
 }
