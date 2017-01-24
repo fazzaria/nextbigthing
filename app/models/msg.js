@@ -5,7 +5,7 @@ var MsgSchema = new Schema({
 	Content: String,
 	Author: { type: Schema.Types.ObjectId, ref: 'User' },
 	DatePosted: Date,
-	Room: String
+	Room: { type: Schema.Types.ObjectId, ref: 'Room' }
 });
 
 module.exports = mongoose.model('Msg', MsgSchema);

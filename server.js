@@ -63,70 +63,72 @@ app.use(function (err, req, res, next) {
 
 var Msg = require('./app/models/msg');
 var User = require('./app/models/user');
+var Room = require('./app/models/room');
 
 io.on('connection', function(socket) {
-	//Globals
-	var defaultRoom = 'General';
-	var rooms = ["General", "CSPAN Bingo", "Stalin For Time"];
 
-	//Emit the rooms array
-	socket.emit('setup', {
-		rooms: rooms
-	});
+	var roomNames = [];
 
-	//Listens for new user
-	socket.on('new user', function(data) {
-		data.room = data.room;
-		//New user joins the default room
-		socket.join(data.room);
-		//Tell all those in the room that a new user joined
-		io.in(data.room).emit('user joined', data);
-	});
+	Room.find(function(err, rooms) {
+		if (err) {
+			console.log(err);
+		}
 
-	//Listens for leave room
-	socket.on('leave room', function(data) {
-		//Handles joining and leaving rooms
-		socket.leave(data.room);
-		io.in(data.room).emit('user left', data);
-	});
+		for (var i = 0; i < rooms.length; i++) {
+			roomNames.push(rooms[i].Name);
+		}
 
-	//Listens for switch room
-	socket.on('switch room', function(data) {
-		//Handles joining and leaving rooms
-		socket.leave(data.oldRoom);
-		socket.join(data.newRoom);
-		io.in(data.oldRoom).emit('user left', data);
-		io.in(data.newRoom).emit('user joined', data);
-	});
+		var defaultRoom = roomNames[0];
 
-	//Listens for a new chat message
-	socket.on('new message', function(data) {
-		//Create message
-		console.log('new message');
-		User.findOne()
-		var newMsg = new Msg({
-			Author: data.userid,
-			Content: data.Content,
-			Room: data.Room,
-			DatePosted: new Date()
+		//Emit the rooms array
+		socket.emit('setup', {
+			rooms: rooms
 		});
-		//Save it to database
-		newMsg.save(function(err, msg) {
-			if (err) {
-				console.log(err);
-			}
-			console.log(msg);
-			//Send message to those connected in the room
-			io.in(msg.Room).emit('message created', msg);
-		});
-	});
 
-	socket.on('test', function(data) {
-		data.test = defaultRoom;
-		//New user joins the default room
-		socket.join(defaultRoom);
-		//Tell all those in the room that a new user joined
-		io.in(defaultRoom).emit('alert', data);
+		//Listens for new user
+		socket.on('new user', function(data) {
+			socket.join(data.roomName);
+			//Tell all those in the room that a new user joined
+			io.in(data.roomName).emit('user joined', data);
+		});
+
+		//Listens for leave room
+		socket.on('leave room', function(data) {
+			//Handles joining and leaving rooms
+			socket.leave(data.roomName);
+			io.in(data.roomName).emit('user left', data);
+		});
+
+		//Listens for switch room
+		socket.on('switch room', function(data) {
+			//Handles joining and leaving rooms
+			socket.leave(data.oldRoom);
+			socket.join(data.newRoom);
+			io.in(data.oldRoom).emit('user left', data);
+			io.in(data.newRoom).emit('user joined', data);
+		});
+
+		//Listens for a new chat message
+		socket.on('new message', function(data) {
+			//Create message
+			console.log('new message');
+
+			var newMsg = new Msg({
+				Author: data.userid,
+				Content: data.Content,
+				Room: data.Room,
+				DatePosted: new Date()
+			});
+			//Save it to database
+			newMsg.save(function(err, msg) {
+				if (err) {
+					console.log(err);
+				}
+				console.log(msg);
+				//Send message to those connected in the room
+				io.in(msg.Room.Name).emit('message created', msg);
+			});
+		});
 	});
 });
 

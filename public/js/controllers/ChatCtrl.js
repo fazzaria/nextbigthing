@@ -1,19 +1,19 @@
 var $ = require('jQuery');
 module.exports = function($scope, AuthService, MsgFactory, chatSocket) {
     $scope.msgs = [];
-    $scope.postText = "";
-    $scope.currentRoom = "";
+    $scope.post = {};
+    $scope.currentRoom = {};
     $scope.rooms = [];
 
     $scope.selectRoom = function(room) {
-        chatSocket.emit('new user', {room: room});
+        chatSocket.emit('new user', {roomName: room});
         $scope.currentRoom = room;
         $scope.refreshMsgs();
     };
 
     $scope.leaveRoom = function() {
-        $scope.currentRoom = "";
-        chatSocket.emit('leave room', {room: $scope.currentRoom});
+        $scope.currentRoom = {};
+        chatSocket.emit('leave room', {roomName: $scope.currentRoom.Name});
     };
 
     $scope.refreshMsgs = function() {
@@ -25,16 +25,17 @@ module.exports = function($scope, AuthService, MsgFactory, chatSocket) {
         });
     };
 
-    $scope.postMsg = function() {
+    $scope.postMsg = function(text) {
         var currentUser = AuthService.currentUser();
-        if (currentUser && $scope.postText) {
+        console.log(currentUser, text)
+        if (currentUser && text) {
             var msg = {
                 userid: currentUser._id,
-                Content: $scope.postText,
-                Room: 'General'
-            }
+                Content: text,
+                Room: $scope.currentRoom
+            };
             chatSocket.emit("new message", msg);
-            $scope.postText = "";
+            $scope.post = {};
             $("#commentField").focus();
         } else {
             console.log("Did not post.");
