@@ -1,19 +1,19 @@
 <div>
   <div ng-if="$parent.loggedIn">
-    <div ng-if="!currentRoom">
+    <div ng-if="!currentRoom.Name">
       <h4>Select a room:</h4>
-      <div class="panel panel-primary" ng-repeat="room in rooms"> 
+      <div class="panel panel-primary" ng-repeat="room in rooms track by $index"> 
         <div class="panel-heading">
           <h3 class="panel-title">{{room.Name}}</h3>
         </div>
-        <div class="panel-body"><a href="#" ng-click="selectRoom(room)">{{room.Description}}</a></div>
+        <div class="panel-body">{{room.Description}} <a href="#" ng-click="joinRoom(room)">Join (Currently online: {{room.CurrentUsers}})</a></div>
       </div>
     </div>
-    <div ng-if="currentRoom" id="chatContainer">
-      <a href="#" ng-click="leaveRoom()">Leave Chat</a>
+    <div ng-if="currentRoom.Name" id="chatContainer">
+      <a href="#" ng-click="leaveRoom(currentRoom)">Leave Chat</a>
       <ul class="list-group">
-        <li class="list-group-item" ng-repeat="msg in msgs">
-          {{msg.Author}} ({{msg.DatePosted}}): {{msg.Content}}
+        <li class="list-group-item" ng-repeat="msg in msgs track by $index">
+          <span class="lead">{{msg.Author.DisplayName}}</span> ({{msg.DatePosted}}): {{msg.Content}}
         </li>
       </ul>
       <div class="row">

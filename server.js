@@ -62,7 +62,7 @@ app.use(function (err, req, res, next) {
 //Listen for connection
 
 var Msg = require('./app/models/msg');
-var User = require('./app/models/user');
+var User = require('./app/models/user').model;
 var Room = require('./app/models/room');
 
 io.on('connection', function(socket) {
@@ -86,17 +86,15 @@ io.on('connection', function(socket) {
 		});
 
 		//Listens for new user
-		socket.on('new user', function(data) {
-			socket.join(data.roomName);
-			//Tell all those in the room that a new user joined
-			io.in(data.roomName).emit('user joined', data);
+		socket.on('new user', function(room) {
+			socket.join(room.Name);
+			io.in(room.Name).emit('user joined');
 		});
 
 		//Listens for leave room
-		socket.on('leave room', function(data) {
-			//Handles joining and leaving rooms
-			socket.leave(data.roomName);
-			io.in(data.roomName).emit('user left', data);
+		socket.on('leave room', function(room) {
+			socket.leave(room.Name);
+			io.in(room.Name).emit('user left', room);
 		});
 
 		//Listens for switch room
@@ -110,29 +108,23 @@ io.on('connection', function(socket) {
 
 		//Listens for a new chat message
 		socket.on('new message', function(data) {
-			//Create message
-			console.log('new message');
-
 			var newMsg = new Msg({
-				Author: data.userid,
+				Author: data.Author,
 				Content: data.Content,
-				Room: data.Room,
-				DatePosted: new Date()
+				Room: data.Room
 			});
 			//Save it to database
 			newMsg.save(function(err, msg) {
 				if (err) {
 					console.log(err);
 				}
-				console.log(msg);
-				//Send message to those connected in the room
-				io.in(msg.Room.Name).emit('message created', msg);
+				io.in(data.Room.Name).emit('message created', msg);
 			});
 		});
 	});
 });
 
-// END SOCKETS ================================================= |
+// END SOCKETS ============================================== |
 
 var config = require('./config/db');
 

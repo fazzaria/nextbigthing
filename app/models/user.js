@@ -13,7 +13,10 @@ var UserSchema = new Schema({
 		type: String,
 		required: true
 	},
-	DateRegistered: Date,
+	DateRegistered: {
+		type: Date,
+		default: Date.now
+	},
 	hash: String,
 	salt: String
 });
@@ -41,4 +44,5 @@ UserSchema.methods.generateJwt = function() {
 	}, "password");
 };
 
-module.exports = mongoose.model('User', UserSchema);
+module.exports.model = mongoose.model('User', UserSchema);
+module.exports.schema = UserSchema;

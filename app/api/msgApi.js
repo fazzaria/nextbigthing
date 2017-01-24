@@ -1,5 +1,5 @@
 var Msg = require('../models/msg');
-var User = require('../models/user');
+var User = require('../models/user').model;
 
 module.exports = function(router) {
     router.route('/msgs')
@@ -12,7 +12,6 @@ module.exports = function(router) {
             }
             msg.Author = user._id;
             msg.Content = req.body.Content;
-            msg.DatePosted = new Date();
             msg.save(function(err) {
                 if (err) {
                     res.send(err);
@@ -22,13 +21,14 @@ module.exports = function(router) {
                 });
             });
         });
-    })
+    });
+    //get msgs by room
+    router.route('/msgs/:roomID')
     .get(function(req, res) {
-        Msg.find(function(err, msgs) {
+        Msg.find({Room: req.params.roomID}, function(err, msgs) {
             if (err) {
                 res.send(err);
             }
-
             res.json(msgs);
         });
     });
@@ -53,10 +53,7 @@ module.exports = function(router) {
                 msg.Author = req.body.Author;
             }
             if (req.body.Content) {
-                req.body.Content
-            }
-            if (req.body.DatePosted) {
-                msg.Content = req.body.Content;
+                msg.Content = req.body.Content
             }
 
             // save the msg

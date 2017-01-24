@@ -2,22 +2,21 @@ var $ = require('jQuery');
 module.exports = function($scope, AuthService, MsgFactory, chatSocket) {
     $scope.msgs = [];
     $scope.post = {};
-    $scope.currentRoom = {};
     $scope.rooms = [];
 
-    $scope.selectRoom = function(room) {
-        chatSocket.emit('new user', {roomName: room});
+    $scope.joinRoom = function(room) {
+        chatSocket.emit('new user', room);
         $scope.currentRoom = room;
         $scope.refreshMsgs();
     };
 
-    $scope.leaveRoom = function() {
+    $scope.leaveRoom = function(room) {
+        chatSocket.emit('leave room', room);
         $scope.currentRoom = {};
-        chatSocket.emit('leave room', {roomName: $scope.currentRoom.Name});
     };
 
     $scope.refreshMsgs = function() {
-        MsgFactory.get({Room: $scope.currentRoom}).then(function(success) {
+        MsgFactory.get($scope.currentRoom._id).then(function(success) {
             $scope.msgs = success.data;
             $scope.feedback = "";
         }, function(err) {
@@ -27,10 +26,12 @@ module.exports = function($scope, AuthService, MsgFactory, chatSocket) {
 
     $scope.postMsg = function(text) {
         var currentUser = AuthService.currentUser();
-        console.log(currentUser, text)
         if (currentUser && text) {
             var msg = {
-                userid: currentUser._id,
+                Author: {
+                    UserName: currentUser.UserName,
+                    DisplayName: currentUser.DisplayName
+                },
                 Content: text,
                 Room: $scope.currentRoom
             };
@@ -47,11 +48,12 @@ module.exports = function($scope, AuthService, MsgFactory, chatSocket) {
     });
 
     chatSocket.on('user joined', function(data) {
-        console.log('user joined');
+        /*$scope.msgs.push({
+            
+        });*/
     });
 
     chatSocket.on('message created', function(data) {
-        console.log("message created");
         $scope.refreshMsgs();
     })
 

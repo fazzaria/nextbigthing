@@ -1,4 +1,4 @@
-module.exports = function($http, $window) {
+module.exports = function($http, $window, UserFactory) {
     var saveToken = function (token) {
         $window.localStorage['StalinForTime-token'] = token;
     };

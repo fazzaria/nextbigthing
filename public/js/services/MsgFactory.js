@@ -1,8 +1,8 @@
 module.exports = function($http, mySocket) {
     return {
-        // call to get all msgs
-        get: function() {
-            return $http.get('/api/msgs')
+        // call to get msgs
+        get: function(data) {
+            return $http.get('/api/msgs/' + data)
                 .then(function(success) {
                     return success;
                 },

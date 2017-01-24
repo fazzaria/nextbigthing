@@ -9,7 +9,6 @@ module.exports = function(router) {
             user.UserName = req.body.UserName;
             user.DisplayName = req.body.UserName;
             user.Pwd = req.body.Pwd;
-            user.DateRegistered = new Date();
             user.save(function(err) {
                 if (err) {
                     res.send(err);

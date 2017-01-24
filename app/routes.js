@@ -1,4 +1,4 @@
-require('./models/user');
+require('./models/user').model;
 
 module.exports = function() {
 	
