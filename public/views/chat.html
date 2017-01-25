@@ -12,7 +12,7 @@
     <div ng-if="currentRoom.Name" id="chatContainer">
       <a href="#" ng-click="leaveRoom(currentRoom)">Leave Chat</a>
       <ul class="list-group">
-        <li class="list-group-item" ng-repeat="msg in msgs track by $index">
+        <li class="list-group-item animation" ng-repeat="msg in msgs track by $index">
           <span class="lead">{{msg.Author.DisplayName}}</span> ({{msg.DatePosted}}): {{msg.Content}}
         </li>
       </ul>
@@ -21,7 +21,7 @@
           <p>{{feedback}}</p>
           <form ng-submit="postMsg(post.text)">
             <div class="input-group">
-              <input id="commentField" class="form-inline form-control" placeholder="Enter comments here" ng-model="post.text" type="text">
+              <input id="commentField" class="form-inline form-control" placeholder="Enter comments here" ng-model="post.text" type="text" autocomplete="off">
               <span class="input-group-btn">
                 <button type="submit" class="btn btn-primary btn-small form-inline">Post Comment</button>
               </span>

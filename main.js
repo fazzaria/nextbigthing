@@ -14,7 +14,7 @@ window.io = io;
 
 var css = require('./public/css/style.css');
 
-var app = angular.module('app', [angularRoute, angularAnimate, 'btford.socket-io']);
+var app = angular.module('app', [angularRoute, 'ngAnimate', 'btford.socket-io']);
 
 app.config(function ($httpProvider) {
     $httpProvider.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded; charset=UTF-8';

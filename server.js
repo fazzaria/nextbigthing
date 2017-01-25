@@ -81,8 +81,10 @@ io.on('connection', function(socket) {
 		var defaultRoom = roomNames[0];
 
 		//Emit the rooms array
-		socket.emit('setup', {
-			rooms: rooms
+		socket.on('request setup', function(data) {
+			socket.emit('setup', {
+				rooms: rooms
+			});
 		});
 
 		//Listens for new user
@@ -126,7 +128,7 @@ io.on('connection', function(socket) {
 
 // END SOCKETS ============================================== |
 
-var config = require('./config/db');
+var config = require('./config/config.json');
 
 //warning fix
 mongoose.Promise = global.Promise;

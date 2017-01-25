@@ -13,6 +13,8 @@ module.exports = function($scope, AuthService, MsgFactory, chatSocket) {
     $scope.leaveRoom = function(room) {
         chatSocket.emit('leave room', room);
         $scope.currentRoom = {};
+        $scope.msgs = [];
+        $scope.post = {};
     };
 
     $scope.refreshMsgs = function() {
@@ -43,6 +45,8 @@ module.exports = function($scope, AuthService, MsgFactory, chatSocket) {
         }
     };
 
+    chatSocket.emit('request setup');
+
     chatSocket.on('setup', function(data) {
         $scope.rooms = data.rooms;
     });
@@ -55,6 +59,5 @@ module.exports = function($scope, AuthService, MsgFactory, chatSocket) {
 
     chatSocket.on('message created', function(data) {
         $scope.refreshMsgs();
-    })
-
+    });
 };

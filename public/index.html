@@ -37,13 +37,9 @@
             </ul>
         </div>
       </nav>
-      <label>Magically toggle logged-in UI: </label>
-      <input type="checkbox" ng-model="loggedIn">
       <h2>The App</h2>
       <hr>
-      <div class="view-animate-container">
-        <div ng-view class="view-animate"></div>
-      </div>
+        <div ng-view></div>
     </div>
     <div ng-if="feedbackVisible" id="fullShield" class="modal-backdrop fade in">
       <h1 class="feedback">{{feedback}}</h1>
