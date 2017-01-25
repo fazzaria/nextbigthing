@@ -14,7 +14,7 @@ window.io = io;
 
 var css = require('./public/css/style.css');
 
-var app = angular.module('app', [angularRoute, angularAnimate, 'btford.socket-io']);
+var app = angular.module('app', [angularRoute, 'ngAnimate', 'btford.socket-io']);
 
 app.config(function ($httpProvider) {
     $httpProvider.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded; charset=UTF-8';
@@ -31,7 +31,7 @@ app.factory('UserFactory', ['$http', require('./public/js/services/UserFactory')
 app.service('AuthService', ['$http', '$window', 'UserFactory', require('./public/js/services/AuthService')]);
 
 //socket.io connection
-var serverBaseUrl = 'http://localhost:8081';
+var serverBaseUrl = window.location.origin;
 app.factory('chatSocket', function (socketFactory) {
 	var myIoSocket = io.connect(serverBaseUrl);
   	var socket = socketFactory({

@@ -10,20 +10,21 @@
       </div>
     </div>
     <div ng-if="currentRoom.Name" id="chatContainer">
-      <a href="#" ng-click="leaveRoom(currentRoom)">Leave Chat</a>
+      <h3>{{currentRoom.Name}} <a href="#" class="pull-right small" ng-click="leaveRoom(currentRoom)">Exit</a></h3>
+      <hr>
       <ul class="list-group">
-        <li class="list-group-item" ng-repeat="msg in msgs track by $index">
+        <li class="list-group-item animation" ng-repeat="msg in msgs track by $index">
           <span class="lead">{{msg.Author.DisplayName}}</span> ({{msg.DatePosted}}): {{msg.Content}}
         </li>
       </ul>
       <div class="row">
         <div class="col-md-6">
           <p>{{feedback}}</p>
-          <form ng-submit="postMsg(post.text)">
+          <form ng-submit="postMsg(post.text)" autocomplete="off">
             <div class="input-group">
-              <input id="commentField" class="form-inline form-control" placeholder="Enter comments here" ng-model="post.text" type="text">
+              <input id="commentField" class="form-inline form-control" placeholder="Enter comments here" ng-model="post.text" type="text" autocomplete="off">
               <span class="input-group-btn">
-                <button type="submit" class="btn btn-primary btn-small form-inline">Post Comment</button>
+                <button type="submit" class="btn btn-primary btn-small form-inline">Send</button>
               </span>
             </div>
           </form>
