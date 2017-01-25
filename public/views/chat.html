@@ -10,7 +10,8 @@
       </div>
     </div>
     <div ng-if="currentRoom.Name" id="chatContainer">
-      <a href="#" ng-click="leaveRoom(currentRoom)">Leave Chat</a>
+      <h3>{{currentRoom.Name}} <a href="#" class="pull-right small" ng-click="leaveRoom(currentRoom)">Exit</a></h3>
+      <hr>
       <ul class="list-group">
         <li class="list-group-item animation" ng-repeat="msg in msgs track by $index">
           <span class="lead">{{msg.Author.DisplayName}}</span> ({{msg.DatePosted}}): {{msg.Content}}
