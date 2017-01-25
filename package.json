@@ -2,6 +2,7 @@
   "name": "next_big_thing",
   "version": "1.0.0",
   "description": "",
+  "homepage": "https://arcane-tundra-41572.herokuapp.com/",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
