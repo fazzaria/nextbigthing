@@ -10,7 +10,7 @@ var passport       = require('passport');
 var jwt            = require('express-jwt');
 
 var server = http.createServer(app);
-io = io.listen(server);
+io = io(server);
 
 app.use(bodyParser.json());
 app.use(bodyParser.json({ type: 'application/vnd.api+json' }));
