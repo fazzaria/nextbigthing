@@ -19,11 +19,11 @@
       <div class="row">
         <div class="col-md-6">
           <p>{{feedback}}</p>
-          <form ng-submit="postMsg(post.text)">
+          <form ng-submit="postMsg(post.text)" autocomplete="off">
             <div class="input-group">
               <input id="commentField" class="form-inline form-control" placeholder="Enter comments here" ng-model="post.text" type="text" autocomplete="off">
               <span class="input-group-btn">
-                <button type="submit" class="btn btn-primary btn-small form-inline">Post Comment</button>
+                <button type="submit" class="btn btn-primary btn-small form-inline">Send</button>
               </span>
             </div>
           </form>

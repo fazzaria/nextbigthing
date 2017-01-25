@@ -52,9 +52,6 @@ module.exports = function($scope, AuthService, MsgFactory, chatSocket) {
     });
 
     chatSocket.on('user joined', function(data) {
-        /*$scope.msgs.push({
-            
-        });*/
     });
 
     chatSocket.on('message created', function(data) {

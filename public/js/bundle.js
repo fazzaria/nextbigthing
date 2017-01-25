@@ -32,7 +32,7 @@ app.factory('UserFactory', ['$http', require('./public/js/services/UserFactory')
 app.service('AuthService', ['$http', '$window', 'UserFactory', require('./public/js/services/AuthService')]);
 
 //socket.io connection
-var serverBaseUrl = 'http://localhost:8081';
+var serverBaseUrl = 'https://localhost:8081';
 app.factory('chatSocket', function (socketFactory) {
 	var myIoSocket = io.connect(serverBaseUrl);
   	var socket = socketFactory({
@@ -59257,9 +59257,6 @@ module.exports = function($scope, AuthService, MsgFactory, chatSocket) {
     });
 
     chatSocket.on('user joined', function(data) {
-        /*$scope.msgs.push({
-            
-        });*/
     });
 
     chatSocket.on('message created', function(data) {
