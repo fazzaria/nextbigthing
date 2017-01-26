@@ -8,14 +8,16 @@
   margin-top: 10px;
 }
 .animation.ng-leave {
-    -webkit-transition: none;
+  opacity: 1;
+  margin-top: 10px;
 }
 .animation.ng-enter.ng-enter-active {
   opacity: 1;
   margin-top: 0px;
 }
 .animation.ng-leave.ng-leave-active {
-    -webkit-transition: none;
+  opacity: 0;
+  margin-top: 0px;
 }
 
 #fullShield > .feedback {

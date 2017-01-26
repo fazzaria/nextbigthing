@@ -6,17 +6,22 @@ module.exports = function($scope, AuthService, MsgFactory, chatSocket) {
     $scope.post = {};
 
     $scope.joinRoom = function(room) {
-        chatSocket.emit('new user', room);
+        var data = {room: room};
+        data.user = AuthService.currentUser();
+        chatSocket.emit('new user', data);
         $scope.currentRoom = room;
         $scope.refreshMsgs();
     };
 
     $scope.leaveRoom = function(room) {
-        chatSocket.emit('leave room', room);
-        chatSocket.emit('request setup');
+        var data = {room: room};
+        data.user = AuthService.currentUser();
+        chatSocket.emit('leave room', data);
         $scope.currentRoom = {};
         $scope.msgs = [];
         $scope.post = {};
+        $scope.rooms = [];
+        chatSocket.emit('request rooms');
     };
 
     $scope.refreshMsgs = function() {
@@ -47,7 +52,7 @@ module.exports = function($scope, AuthService, MsgFactory, chatSocket) {
         }
     };
 
-    chatSocket.on('setup', function(data) {
+    chatSocket.on('room data', function(data) {
         $scope.rooms = data.rooms;
     });
 
@@ -55,7 +60,7 @@ module.exports = function($scope, AuthService, MsgFactory, chatSocket) {
     });
 
     chatSocket.on('user left', function(data) {
-        chatSocket.emit('request setup');
+        chatSocket.emit('request rooms');
     });
 
     chatSocket.on('message created', function(data) {
@@ -79,6 +84,11 @@ module.exports = function($scope, AuthService, MsgFactory, chatSocket) {
         return date.format('M-DD-YYYY');
     };
 
+    $scope.hideChatBot = false;
+    $scope.toggleHideBot = function() {
+        $scope.hideChatBot = !$scope.hideChatBot;
+    };
+
     //ESC key to exit
     $(document).keyup(function(e) {
         if (e.keyCode == 27) {
@@ -89,6 +99,6 @@ module.exports = function($scope, AuthService, MsgFactory, chatSocket) {
     });
 
     if (!$scope.rooms) {
-        chatSocket.emit('request setup');
+        chatSocket.emit('request rooms');
     }
 };

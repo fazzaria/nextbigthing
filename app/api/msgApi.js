@@ -25,7 +25,7 @@ module.exports = function(router) {
     //get msgs by room
     router.route('/msgs/:roomID')
     .get(function(req, res) {
-        Msg.find({Room: req.params.roomID}, function(err, msgs) {
+        Msg.find({Room: req.params.roomID}).sort({DatePosted: 'ascending'}).exec(function(err, msgs) {
             if (err) {
                 res.send(err);
             }
