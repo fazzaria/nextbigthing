@@ -14,7 +14,7 @@
       <hr>
       <ul class="list-group">
         <li class="list-group-item animation" ng-repeat="msg in msgs track by $index">
-          <span class="lead">{{msg.Author.DisplayName}}</span> ({{msg.DatePosted}}): {{msg.Content}}
+          <span class="lead">{{msg.Author.DisplayName}}</span> ({{formatDate(msg.DatePosted)}}): {{msg.Content}}
         </li>
       </ul>
       <div class="row">

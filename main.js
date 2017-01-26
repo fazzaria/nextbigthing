@@ -3,6 +3,7 @@ var angular        = require('angular');
 var angularRoute   = require('angular-route');
 var angularAnimate = require('angular-animate');
 var $              = require('jquery');
+var moment         = require('moment');
 
 window.$ = $;
 window.jQuery = $;

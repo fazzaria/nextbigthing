@@ -1,8 +1,9 @@
-var $ = require('jQuery');
+var $      = require('jQuery');
+var moment = require('moment');
+
 module.exports = function($scope, AuthService, MsgFactory, chatSocket) {
     $scope.msgs = [];
     $scope.post = {};
-    $scope.rooms = [];
 
     $scope.joinRoom = function(room) {
         chatSocket.emit('new user', room);
@@ -12,6 +13,7 @@ module.exports = function($scope, AuthService, MsgFactory, chatSocket) {
 
     $scope.leaveRoom = function(room) {
         chatSocket.emit('leave room', room);
+        chatSocket.emit('request setup');
         $scope.currentRoom = {};
         $scope.msgs = [];
         $scope.post = {};
@@ -45,9 +47,12 @@ module.exports = function($scope, AuthService, MsgFactory, chatSocket) {
         }
     };
 
-    chatSocket.emit('request setup');
+    if (!$scope.rooms) {
+        chatSocket.emit('request setup');
+    }
 
     chatSocket.on('setup', function(data) {
+        console.log("setup");
         $scope.rooms = data.rooms;
     });
 
@@ -57,4 +62,20 @@ module.exports = function($scope, AuthService, MsgFactory, chatSocket) {
     chatSocket.on('message created', function(data) {
         $scope.refreshMsgs();
     });
+
+    $scope.formatDate = function(dateString) {
+        var date = moment(dateString, "YYYY-MM-DD HH:mm:ss.SSSZ");
+        var yesterday = moment().subtract(1, 'days');
+        var lastWeek = moment().subtract(1, 'weeks');
+        if (date.isAfter(yesterday)) {
+            return date.format('h:mm A');
+        }
+        if (date.isAfter(lastWeek)) {
+            return date.format('dddd');
+        }
+        if (date.isAfter(lastMonth)) {
+            return date.format('M-DD');
+        }
+        return date.format('M-DD-YYYY');
+    }
 };

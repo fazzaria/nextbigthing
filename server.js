@@ -55,78 +55,7 @@ app.use(function (err, req, res, next) {
 	}
 });
 
-// END ROUTING ============================================== |
-
-// SOCKETS     ============================================== |
-
-//Listen for connection
-
-var Msg = require('./app/models/msg');
-var User = require('./app/models/user').model;
-var Room = require('./app/models/room');
-
-io.on('connection', function(socket) {
-
-	var roomNames = [];
-
-	Room.find(function(err, rooms) {
-		if (err) {
-			console.log(err);
-		}
-
-		for (var i = 0; i < rooms.length; i++) {
-			roomNames.push(rooms[i].Name);
-		}
-
-		var defaultRoom = roomNames[0];
-
-		//Emit the rooms array
-		socket.on('request setup', function(data) {
-			socket.emit('setup', {
-				rooms: rooms
-			});
-		});
-
-		//Listens for new user
-		socket.on('new user', function(room) {
-			socket.join(room.Name);
-			io.in(room.Name).emit('user joined');
-		});
-
-		//Listens for leave room
-		socket.on('leave room', function(room) {
-			socket.leave(room.Name);
-			io.in(room.Name).emit('user left', room);
-		});
-
-		//Listens for switch room
-		socket.on('switch room', function(data) {
-			//Handles joining and leaving rooms
-			socket.leave(data.oldRoom);
-			socket.join(data.newRoom);
-			io.in(data.oldRoom).emit('user left', data);
-			io.in(data.newRoom).emit('user joined', data);
-		});
-
-		//Listens for a new chat message
-		socket.on('new message', function(data) {
-			var newMsg = new Msg({
-				Author: data.Author,
-				Content: data.Content,
-				Room: data.Room
-			});
-			//Save it to database
-			newMsg.save(function(err, msg) {
-				if (err) {
-					console.log(err);
-				}
-				io.in(data.Room.Name).emit('message created', msg);
-			});
-		});
-	});
-});
-
-// END SOCKETS ============================================== |
+require('./app/chatSockets')(io);
 
 var config = require('./config/config.json');
 
