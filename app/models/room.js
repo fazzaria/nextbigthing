@@ -7,7 +7,8 @@ var RoomSchema = new Schema({
 		unique: true
 	},
 	Description: String,
-	CurrentUsers: Number
+	CurrentUsers: Number,
+	RulesetName: String
 });
 
 module.exports = mongoose.model('Room', RoomSchema);

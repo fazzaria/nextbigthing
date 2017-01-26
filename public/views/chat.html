@@ -10,11 +10,13 @@
       </div>
     </div>
     <div ng-if="currentRoom.Name" id="chatContainer">
-      <h3>{{currentRoom.Name}} <a href="#" class="pull-right small" ng-click="leaveRoom(currentRoom)">Exit</a></h3>
+      <h3>{{currentRoom.Name}} <a href="#" class="pull-right small" ng-click="leaveRoom(currentRoom)">Exit (ESC)</a></h3>
+      <p class="pull-right" ng-if="hideChatBot">Show bot messages <input type="checkbox" ng-model="hideChatBot" ng-click="toggleHideBot()"></p>
+      <p class="pull-right" ng-if="!hideChatBot">Hide bot messages <input type="checkbox" ng-model="hideChatBot" ng-click="toggleHideBot()"></p>
       <hr>
       <ul class="list-group">
-        <li class="list-group-item animation" ng-repeat="msg in msgs track by $index">
-          <span class="lead">{{msg.Author.DisplayName}}</span> ({{msg.DatePosted}}): {{msg.Content}}
+        <li class="list-group-item animation" ng-repeat="msg in msgs track by $index" ng-if="msg.Author.UserName!='ChatBot' || !hideChatBot">
+          <span class="lead">{{msg.Author.DisplayName}}</span> <span class="small">({{formatDate(msg.DatePosted)}}):</span><span> {{msg.Content}}</span>
         </li>
       </ul>
       <div class="row">
