@@ -10,11 +10,11 @@
       </div>
     </div>
     <div ng-if="currentRoom.Name" id="chatContainer">
-      <h3>{{currentRoom.Name}} <a href="#" class="pull-right small" ng-click="leaveRoom(currentRoom)">Exit</a></h3>
+      <h3>{{currentRoom.Name}} <a href="#" class="pull-right small" ng-click="leaveRoom(currentRoom)">Exit (ESC)</a></h3>
       <hr>
       <ul class="list-group">
         <li class="list-group-item animation" ng-repeat="msg in msgs track by $index">
-          <span class="lead">{{msg.Author.DisplayName}}</span> ({{formatDate(msg.DatePosted)}}): {{msg.Content}}
+          <span class="lead">{{msg.Author.DisplayName}}</span> <span class="small">({{formatDate(msg.DatePosted)}}):</span><span> {{msg.Content}}</span>
         </li>
       </ul>
       <div class="row">

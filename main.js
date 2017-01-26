@@ -34,7 +34,7 @@ app.service('AuthService', ['$http', '$window', 'UserFactory', require('./public
 //socket.io connection
 var serverBaseUrl = window.location.origin;
 app.factory('chatSocket', function (socketFactory) {
-	var myIoSocket = io.connect(serverBaseUrl);
+	var myIoSocket = io.connect(serverBaseUrl, {'forceNew': true});
   	var socket = socketFactory({
         ioSocket: myIoSocket
     });

@@ -35,7 +35,7 @@ app.service('AuthService', ['$http', '$window', 'UserFactory', require('./public
 //socket.io connection
 var serverBaseUrl = window.location.origin;
 app.factory('chatSocket', function (socketFactory) {
-	var myIoSocket = io.connect(serverBaseUrl);
+	var myIoSocket = io.connect(serverBaseUrl, {'forceNew': true});
   	var socket = socketFactory({
         ioSocket: myIoSocket
     });
@@ -63556,16 +63556,15 @@ module.exports = function($scope, AuthService, MsgFactory, chatSocket) {
         }
     };
 
-    if (!$scope.rooms) {
-        chatSocket.emit('request setup');
-    }
-
     chatSocket.on('setup', function(data) {
-        console.log("setup");
         $scope.rooms = data.rooms;
     });
 
     chatSocket.on('user joined', function(data) {
+    });
+
+    chatSocket.on('user left', function(data) {
+        chatSocket.emit('request setup');
     });
 
     chatSocket.on('message created', function(data) {
@@ -63574,18 +63573,32 @@ module.exports = function($scope, AuthService, MsgFactory, chatSocket) {
 
     $scope.formatDate = function(dateString) {
         var date = moment(dateString, "YYYY-MM-DD HH:mm:ss.SSSZ");
-        var yesterday = moment().subtract(1, 'days');
-        var lastWeek = moment().subtract(1, 'weeks');
+        var yesterday = moment().subtract(1, 'days').hours(23).minutes(59);
+        var lastWeek = moment().subtract(1, 'weeks').hours(23).minutes(59);
+        var lastMonth = moment().subtract(1, 'months').hours(23).minutes(59);
         if (date.isAfter(yesterday)) {
             return date.format('h:mm A');
         }
         if (date.isAfter(lastWeek)) {
-            return date.format('dddd');
+            return date.format('ddd');
         }
         if (date.isAfter(lastMonth)) {
             return date.format('M-DD');
         }
         return date.format('M-DD-YYYY');
+    };
+
+    //ESC key to exit
+    $(document).keyup(function(e) {
+        if (e.keyCode == 27) {
+            if($scope.currentRoom.Name) {
+                $scope.leaveRoom($scope.currentRoom);
+            }
+        }
+    });
+
+    if (!$scope.rooms) {
+        chatSocket.emit('request setup');
     }
 };
 },{"jQuery":51,"moment":54}],81:[function(require,module,exports){
