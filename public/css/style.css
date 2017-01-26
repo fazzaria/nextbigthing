@@ -25,3 +25,9 @@
   width: 100%;
   text-align: center;
 }
+
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+  input#commentField {
+    font-size: 16px;
+  }
+}
