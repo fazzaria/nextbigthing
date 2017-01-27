@@ -1,40 +1,47 @@
 <div>
-  <div ng-if="$parent.loggedIn">
-    <div ng-if="!currentRoom.Name">
-      <h4>Select a room:</h4>
-      <div class="panel panel-primary" ng-repeat="room in rooms track by $index"> 
-        <div class="panel-heading">
-          <h3 class="panel-title">{{room.Name}}</h3>
-        </div>
-        <div class="panel-body">{{room.Description}} <a href="#" ng-click="joinRoom(room)">Join (Currently online: {{room.CurrentUsers}})</a></div>
-      </div>
-    </div>
-    <div ng-if="currentRoom.Name" id="chatContainer">
-      <h3>{{currentRoom.Name}} <a href="#" class="pull-right small" ng-click="leaveRoom(currentRoom)">Exit (ESC)</a></h3>
-      <p class="pull-right" ng-if="hideChatBot">Show bot messages <input type="checkbox" ng-model="hideChatBot" ng-click="toggleHideBot()"></p>
-      <p class="pull-right" ng-if="!hideChatBot">Hide bot messages <input type="checkbox" ng-model="hideChatBot" ng-click="toggleHideBot()"></p>
-      <hr>
-      <ul class="list-group">
-        <li class="list-group-item animation" ng-repeat="msg in msgs track by $index" ng-if="msg.Author.UserName!='ChatBot' || !hideChatBot">
-          <span class="lead">{{msg.Author.DisplayName}}</span> <span class="small">({{formatDate(msg.DatePosted)}}):</span><span> {{msg.Content}}</span>
-        </li>
-      </ul>
-      <div class="row">
-        <div class="col-md-6">
-          <p>{{feedback}}</p>
-          <form ng-submit="postMsg(post.text)" autocomplete="off">
-            <div class="input-group">
-              <input id="commentField" class="form-inline form-control" placeholder="Enter comments here" ng-model="post.text" type="text" autocomplete="off">
-              <span class="input-group-btn">
-                <button type="submit" class="btn btn-primary btn-small form-inline">Send</button>
-              </span>
+    <div ng-if="$parent.loggedIn">
+        <div ng-if="!currentRoom.Name">
+            <h4>Select a room:</h4>
+            <div class="panel panel-primary" ng-repeat="room in rooms track by $index"> 
+                <div class="panel-heading">
+                    <h3 class="panel-title">{{room.Name}}</h3>
+                </div>
+                <div class="panel-body">{{room.Description}} <a href="#" ng-click="joinRoom(room)">Join (Currently online: {{room.CurrentUsers}})</a></div>
             </div>
-          </form>
         </div>
-      </div>
+        <div ng-if="currentRoom.Name" id="chatContainer">
+            <h3>{{currentRoom.Name}} <a href="#" class="pull-right small" ng-click="leaveRoom(currentRoom)">Exit (ESC)</a></h3>
+            <div class="alert alert-warning alert-dismissible" role="alert" ng-if="feedback.warning">
+                <button type="button" class="close" aria-label="Close" ng-click="dismissAlert('warning')"><span aria-hidden="true">&times;</span></button>
+                <strong>Warning!</strong> {{feedback.warning}}
+            </div>
+            <div class="alert alert-danger alert-dismissible" role="alert" ng-if="feedback.danger">
+                <button type="button" class="close" aria-label="Close" ng-click="dismissAlert('danger')"><span aria-hidden="true">&times;</span></button>
+                <strong>Danger!</strong> {{feedback.danger}}
+            </div>
+            <p class="pull-right" ng-if="hideChatBot">Show bot messages <input type="checkbox" ng-model="hideChatBot" ng-click="toggleHideBot()"></p>
+            <p class="pull-right" ng-if="!hideChatBot">Hide bot messages <input type="checkbox" ng-model="hideChatBot" ng-click="toggleHideBot()"></p>
+            <hr>
+            <ul class="list-group">
+                <li class="list-group-item animation" ng-repeat="msg in msgs track by $index" ng-if="msg.Author.UserName!='ChatBot' || !hideChatBot">
+                <span class="lead">{{msg.Author.DisplayName}}</span> <span class="small">({{formatDate(msg.DatePosted)}}):</span><span> {{msg.Content}}</span>
+                </li>
+            </ul>
+            <div class="row">
+                <div class="col-md-6">
+                    <form ng-submit="postMsg(post.text)" autocomplete="off">
+                        <div class="input-group">
+                            <input id="commentField" class="form-inline form-control" placeholder="Enter comments here" ng-model="post.text" type="text" autocomplete="off">
+                            <span class="input-group-btn">
+                                <button type="submit" class="btn btn-primary btn-small form-inline">Send</button>
+                            </span>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
-  <div ng-if="!$parent.loggedIn">
-    <p>You must be logged in to start chatting.</p>
-  </div>
+    <div ng-if="!$parent.loggedIn">
+        <p>You must be logged in to start chatting.</p>
+    </div>
 </div>

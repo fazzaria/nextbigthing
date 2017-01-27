@@ -2,12 +2,15 @@ var $      = require('jQuery');
 var moment = require('moment');
 
 module.exports = function($scope, AuthService, MsgFactory, chatSocket) {
+
+    //Chat code
     $scope.msgs = [];
     $scope.post = {};
 
     $scope.joinRoom = function(room) {
         var data = {room: room};
         data.user = AuthService.currentUser();
+        console.log(data.user);
         chatSocket.emit('new user', data);
         $scope.currentRoom = room;
         $scope.refreshMsgs();
@@ -27,9 +30,9 @@ module.exports = function($scope, AuthService, MsgFactory, chatSocket) {
     $scope.refreshMsgs = function() {
         MsgFactory.get($scope.currentRoom._id).then(function(success) {
             $scope.msgs = success.data;
-            $scope.feedback = "";
+            //$scope.feedback = "";
         }, function(err) {
-            $scope.feedback = err;
+            //$scope.feedback = err;
         });
     };
 
@@ -52,6 +55,7 @@ module.exports = function($scope, AuthService, MsgFactory, chatSocket) {
         }
     };
 
+    //Socket code
     chatSocket.on('room data', function(data) {
         $scope.rooms = data.rooms;
     });
@@ -66,7 +70,12 @@ module.exports = function($scope, AuthService, MsgFactory, chatSocket) {
     chatSocket.on('message created', function(data) {
         $scope.refreshMsgs();
     });
+    
+    if (!$scope.rooms) {
+        chatSocket.emit('request rooms');
+    }
 
+    //UI Code
     $scope.formatDate = function(dateString) {
         var date = moment(dateString, "YYYY-MM-DD HH:mm:ss.SSSZ");
         var yesterday = moment().subtract(1, 'days').hours(23).minutes(59);
@@ -85,6 +94,7 @@ module.exports = function($scope, AuthService, MsgFactory, chatSocket) {
     };
 
     $scope.hideChatBot = false;
+
     $scope.toggleHideBot = function() {
         $scope.hideChatBot = !$scope.hideChatBot;
     };
@@ -98,7 +108,16 @@ module.exports = function($scope, AuthService, MsgFactory, chatSocket) {
         }
     });
 
-    if (!$scope.rooms) {
-        chatSocket.emit('request rooms');
-    }
+    $scope.feedback = {
+        success: '',
+        info: '',
+        warning: '',
+        danger: ''
+    };
+
+    $scope.dismissAlert = function(level) {
+        if (level) {
+            $scope.feedback[level] = '';
+        }
+    };
 };
