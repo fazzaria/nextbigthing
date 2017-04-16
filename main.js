@@ -51,4 +51,4 @@ app.controller('ChatCtrl', ['$scope', 'AuthService', 'MsgFactory', 'chatSocket',
 var AppRoutes = require('./public/js/appRoutes');
 app.config(['$routeProvider', '$locationProvider', AppRoutes]);
 
-require('./public/js/ui')();
+require('./public/js/ui');

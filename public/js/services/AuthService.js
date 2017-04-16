@@ -1,10 +1,12 @@
 module.exports = function($http, $window, UserFactory) {
+    var tokenName = 'chatApp-token';
+    
     var saveToken = function (token) {
-        $window.localStorage['StalinForTime-token'] = token;
+        $window.localStorage[tokenName] = token;
     };
 
     var getToken = function () {
-        return $window.localStorage['StalinForTime-token'];
+        return $window.localStorage[tokenName];
     };
 
     var userExists = function(UserName) {
@@ -47,7 +49,7 @@ module.exports = function($http, $window, UserFactory) {
     };
 
     var logout = function() {
-        $window.localStorage.removeItem('StalinForTime-token');
+        $window.localStorage.removeItem(tokenName);
     };
 
     var login = function(user) {

@@ -12,7 +12,7 @@
   <body ng-app="app" ng-controller="MainCtrl">
     <div class="container">
       <nav class="navbar navbar-default">
-        <div class="navbar-header"><a class="navbar-brand" href="/">Home</a>
+        <div class="navbar-header"><a class="navbar-brand" href="/">The App</a>
           <button class="navbar-toggle" data-toggle="collapse" data-target="#navCollapse">
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
@@ -39,9 +39,7 @@
             </ul>
         </div>
       </nav>
-      <h2>The App</h2>
-      <hr>
-        <div ng-view></div>
+      <div ng-view></div>
     </div>
     <div ng-if="feedbackVisible" id="fullShield" class="modal-backdrop fade in">
       <h1 class="feedback">{{feedback}}</h1>

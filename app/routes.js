@@ -24,5 +24,4 @@ module.exports = function() {
 	router.route('/register').post(auth.register);
 
 	return router;
-
 };

@@ -3,18 +3,37 @@ var User = require('./models/user').model;
 var Room = require('./models/room');
 
 module.exports = function(io) {
-	io.on('connection', function(socket) {
-		var roomNames = [];
-		var rulesets = [];
-		var chatbot = {
-			UserName: 'ChatBot',
-			DisplayName: 'ChatBot'
-		};
 
+	function getRooms(callback) {
 		Room.find(function(err, rooms) {
 			if (err) {
-				console.log(err);
-			}
+				console.log("room find error", err);
+			} else callback(rooms);
+		});
+	}
+
+	/*io.sockets.on('disconnect', function() {
+		console.log('disconnect');
+		io.sockets.disconnect();
+		io.sockets.close();
+	});*/
+
+	var chatDaemon = {
+		UserName: 'ChatDaemon',
+		DisplayName: 'ChatDaemon'
+	};
+
+	io.on('connection', function(socket) {
+		console.log("connected");
+
+		getRooms(function(rooms) {
+			console.log("got rooms");
+			socket.emit('room data', {
+				rooms: rooms
+			});
+
+			var roomNames = [];
+			var rulesets = [];
 
 			for (var i = 0; i < rooms.length; i++) {
 				roomNames.push(rooms[i].Name);
@@ -25,94 +44,93 @@ module.exports = function(io) {
 				}
 			}
 
-			var defaultRoom = roomNames[0];
+		});
 
-			socket.on('request rooms', function(data) {
+		socket.on('request rooms', function(data) {
+			getRooms(function(rooms) {
 				socket.emit('room data', {
 					rooms: rooms
 				});
 			});
+		});
 
-			socket.on('new user', function(data) {
-				socket.join(data.room.Name);
-				var numClients = numClientsInRoom('/', data.room.Name);
-				updateUsersOnline(data.room.Name, numClients);
-				io.in(data.room.Name).emit('user joined');
-				addMessage({
-					Author: chatbot,
-					Content: data.user.DisplayName + ' has joined the room.',
-					Room: data.room
-				});
+		socket.on('user joined', function(data) {
+			socket.join(data.room.Name);
+			var numClients = numClientsInRoom('/', data.room.Name);
+			updateUsersOnline(data.room.Name, numClients);
+			io.in(data.room.Name).emit('user joined');
+			addMessage({
+				Author: chatDaemon,
+				Content: data.user.DisplayName + ' has joined the room.',
+				Room: data.room
 			});
+		});
 
-			socket.on('leave room', function(data) {
-				socket.leave(data.room.Name);
-				updateUsersOnline(data.room.Name, -1);
-				io.in(data.room.Name).emit('user left');
-				addMessage({
-					Author: chatbot,
-					Content: data.user.DisplayName + ' has left the room.',
-					Room: data.room
-				});
+		socket.on('leave room', function(data) {
+			socket.leave(data.room.Name);
+			updateUsersOnline(data.room.Name, -1);
+			io.in(data.room.Name).emit('user left');
+			addMessage({
+				Author: chatDaemon,
+				Content: data.user.DisplayName + ' has left the room.',
+				Room: data.room
 			});
+		});
 
-			socket.on('new message', function(data) {
-				addMessage(data);
-				if(data.Room.RulesetName) {
-					rulesets[roomNames.indexOf(data.Room.Name)].checkMessage(data.Content);
-				}
-			});
-
-			socket.on('disconnect', function(data) {
-			});
-
-			function addMessage(data) {
-				var newMsg = new Msg({
-					Author: data.Author,
-					Content: data.Content,
-					Room: data.Room
-				});
-
-				newMsg.save(function(err, msg) {
-					if (err) {
-						console.log(err);
-					}
-					io.in(data.Room.Name).emit('message created', msg);
-				});
-			}
-
-			function updateUsersOnline(roomName, number) {
-				var numObj;
-				if (number == -1) {
-					numObj = { $inc: { CurrentUsers: number } };
-				} else {
-					numObj = { CurrentUsers: number };
-				}
-				Room.findOneAndUpdate({ Name: roomName }, numObj, function(err, room) {
-					if (err) {
-					  console.log(err); 
-					} 
-					else {
-						if (number == -1) {
-							rooms[roomNames.indexOf(room.Name)].CurrentUsers--;
-						} else {
-							rooms[roomNames.indexOf(room.Name)].CurrentUsers = number;
-						}
-						
-						io.in(room.Name).emit('room data', {
-							rooms: rooms
-						});
-					} 
-				});
-			}
-
-			function numClientsInRoom(namespace, roomName) {
-				if (io.nsps[namespace].adapter.rooms[roomName].sockets) {
-					return Object.keys(io.nsps[namespace].adapter.rooms[roomName].sockets).length;
-				} else {
-					return 0;
-				}
+		socket.on('sent message', function(data) {
+			addMessage(data);
+			if(data.Room.RulesetName) {
+				//rulesets[roomNames.indexOf(data.Room.Name)].checkMessage(data.Content);
 			}
 		});
-	});
-};
+
+		socket.on('disconnect', function(data) {
+			console.log("disconnected");
+		});
+
+		function addMessage(data) {
+			var newMsg = new Msg({
+				Author: data.Author,
+				Content: data.Content,
+				Room: data.Room
+			});
+
+			newMsg.save(function(err, msg) {
+				if (err) {
+					console.log("msg save error", err);
+				}
+				io.in(data.Room.Name).emit('new message', msg);
+			});
+		}
+
+		function updateUsersOnline(roomName, number) {
+			var numObj;
+			if (number == -1) {
+				numObj = { $inc: { CurrentUsers: number } };
+			} else {
+				numObj = { CurrentUsers: number };
+			}
+			Room.findOneAndUpdate({ Name: roomName }, numObj, function(err, room) {
+				if (err) {
+				  console.log("update users online error", err); 
+				}
+				else {
+					//refresh room data for all sockets
+					getRooms(function(rooms) {
+						io.sockets.emit('room data', {
+							rooms: rooms
+						});
+					});
+				} 
+			});
+		}
+
+		function numClientsInRoom(namespace, roomName) {
+			if (io.nsps[namespace].adapter.rooms[roomName].sockets) {
+				return Object.keys(io.nsps[namespace].adapter.rooms[roomName].sockets).length;
+			} else {
+				return 0;
+			}
+		}
+	}); // end io on connect
+}; // end export
