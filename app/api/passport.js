@@ -13,7 +13,7 @@ module.exports = function() {
 				if (err) {
 					return done(err);
 				}
-				//Return if user not wrong
+				//Return if user not found
 				if(!user) {
 					return done(null, false, {
 						message: 'User not found'

@@ -45,7 +45,7 @@ var auth = jwt({
 });
 
 app.get('*', function(req, res) {
-    res.sendFile(path.join(__dirname, './public/index.html'));
+  res.sendFile(path.join(__dirname, './public/index.html'));
 });
 
 app.use(function (err, req, res, next) {
@@ -68,10 +68,8 @@ var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 
 db.once('open', function() {
-
 	var port = process.env.PORT || 8081;
-
-  	server.listen(port, function() {
+	server.listen(port, function() {
 		console.log("Server running on port", port + ".");
 	});
 });
