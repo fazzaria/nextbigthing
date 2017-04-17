@@ -37,4 +37,11 @@ module.exports = function($scope, $location, AuthService) {
 	$scope.goRegister = function() {
 		$location.url("/register");
 	};
+
+	//property for routes that require login
+	$scope.$on('$routeChangeStart', function(angularEvent, newUrl) {
+    if (newUrl.requireAuth && !AuthService.isLoggedIn()) {
+        $location.path("/401");
+    }
+  });
 };
