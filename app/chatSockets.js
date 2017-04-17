@@ -18,6 +18,9 @@ module.exports = function(io) {
 	};
 
 	io.on('connection', function(socket) {
+		//maintain state of user and room on server side
+		var user = {};
+		var room = {};
 
 		getRooms(function(rooms) {
 			socket.emit('room data', {
@@ -76,6 +79,7 @@ module.exports = function(io) {
 		});
 
 		socket.on('disconnect', function(data) {
+			console.log("disconnect", data, socket);
 		});
 
 		function addMessage(data) {

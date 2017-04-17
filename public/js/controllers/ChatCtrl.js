@@ -13,6 +13,9 @@ module.exports = function($scope, AuthService, MsgFactory, chatSocket) {
   });
 
   $scope.$on("$destroy", function() {
+    if ($scope.currentRoom.Name) {
+      $scope.leaveRoom($scope.currentRoom);
+    }
     chatSocket.disconnect();
     chatSocket.removeAllListeners();
   });
