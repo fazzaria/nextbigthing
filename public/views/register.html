@@ -1,7 +1,24 @@
-<p>Sign up here.</p>
-<form ng-submit="tryRegister()">
-	<input class="form-control" placeholder="Username" type="text" ng-model="registerUser.UserName">
-	<input class="form-control" placeholder="Display Name" type="text" ng-model="registerUser.DisplayName">
-	<input class="form-control" placeholder="Password" type="password" ng-model="registerUser.Pwd">
-	<button type="submit" id="rg-submit-btn" class="btn btn-success">Submit</button>
-</form>
+<div class="row">
+	<div class="col-md-12">
+		<p>Sign up here.</p>
+	</div>
+</div>
+<div class="row">
+	<div class="col-md-6">
+		<form ng-submit="tryRegister()">
+			<div class="form-group">
+        <label>Username:</label>
+				<input class="form-control" placeholder="Username" type="text" ng-model="registerUser.UserName">
+			</div>
+			<div class="form-group">
+        <label>Display Name:</label>
+				<input class="form-control" placeholder="Display Name" type="text" ng-model="registerUser.DisplayName">
+			</div>
+			<div class="form-group">
+        <label>Password:</label>
+				<input class="form-control" placeholder="Password" type="password" ng-model="registerUser.Pwd">
+			</div>
+			<button type="submit" id="rg-submit-btn" class="btn btn-primary">Submit</button>
+		</form>
+	</div>
+</div>

@@ -1,4 +1,5 @@
 module.exports = function($routeProvider, $locationProvider) {
+
   $routeProvider
     .when('/', {
       templateUrl: 'views/home.html',
@@ -6,7 +7,8 @@ module.exports = function($routeProvider, $locationProvider) {
     })
     .when('/chat', {
       templateUrl: 'views/chat.html',
-      controller: 'ChatCtrl'
+      controller: 'ChatCtrl',
+      requireAuth: true
     })
     .when('/about', {
       templateUrl: 'views/about.html'
@@ -17,7 +19,11 @@ module.exports = function($routeProvider, $locationProvider) {
     })
     .when('/settings', {
       templateUrl: 'views/settings.html',
-      controller: 'SettingsCtrl'
+      controller: 'SettingsCtrl',
+      requireAuth: true
+    })
+    .when('/401', {
+      templateUrl: 'views/401.html'
     })
     .otherwise({templateUrl:'views/404.html'});
       

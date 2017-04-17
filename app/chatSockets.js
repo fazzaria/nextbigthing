@@ -43,7 +43,6 @@ module.exports = function(io) {
 					rulesets.push({});
 				}
 			}
-
 		});
 
 		socket.on('request rooms', function(data) {

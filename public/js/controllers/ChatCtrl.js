@@ -3,19 +3,18 @@ var moment = require('moment');
 
 module.exports = function($scope, AuthService, MsgFactory, chatSocket) {
 
-  //Chat code
   $scope.msgs = [];
   $scope.post = {};
 
   $scope.$on('$viewContentLoaded', function(event) {
-    console.log("content loaded (this should only fire once)");
-    chatSocket.connect();
+    if (AuthService.isLoggedIn()) {
+      chatSocket.connect();
+    }
   });
 
   $scope.$on("$destroy", function() {
     chatSocket.disconnect();
     chatSocket.removeAllListeners();
-    
   });
 
   $scope.joinRoom = function(room) {
@@ -42,42 +41,38 @@ module.exports = function($scope, AuthService, MsgFactory, chatSocket) {
     $scope.currentRoom = {};
     $scope.msgs = [];
     $scope.post = {};
-    //$scope.rooms = [];
-    //server should automatically refresh room data for all sockets
-    //chatSocket.emit('request rooms');
   };
 
   $scope.refreshMsgs = function() {
     if ($scope.currentRoom._id) {
       MsgFactory.get($scope.currentRoom._id).then(function(success) {
         $scope.msgs = success.data;
-        //$scope.feedback = "";
       }, function(err) {
-        //$scope.feedback = err;
+        $scope.feedback[danger] = err;
       });
     }
   };
 
   $scope.postMsg = function(text) {
-      var currentUser = AuthService.currentUser();
-      if (currentUser && text) {
-        var msg = {
-          Author: {
-            UserName: currentUser.UserName,
-            DisplayName: currentUser.DisplayName
-          },
-          Content: text,
-          Room: $scope.currentRoom
-        };
-        chatSocket.emit("sent message", msg);
-        $scope.post = {};
-        $("#commentField").focus();
-      } else {
-        console.log("Did not post.");
-      }
+    var currentUser = AuthService.currentUser();
+    if (currentUser && text) {
+      var msg = {
+        Author: {
+          UserName: currentUser.UserName,
+          DisplayName: currentUser.DisplayName
+        },
+        Content: text,
+        Room: $scope.currentRoom
+      };
+      chatSocket.emit("sent message", msg);
+      $scope.post = {};
+      $("#commentField").focus();
+    } else if (!currentUser) {
+      $scope.feedback[warning] = "Please log in.";
+    }
   };
 
-  //Socket code
+  //socket code
   chatSocket.on('room data', function(data) {
     console.log("got rooms (this should only fire once!)");
     $scope.rooms = data.rooms;
@@ -88,6 +83,7 @@ module.exports = function($scope, AuthService, MsgFactory, chatSocket) {
   });
 
   chatSocket.on('user joined', function(data) {
+    console.log("user joined");
   });
 
   chatSocket.on('user left', function(data) {
@@ -126,8 +122,6 @@ module.exports = function($scope, AuthService, MsgFactory, chatSocket) {
     $scope.hideChatBot = !$scope.hideChatBot;
   };
 
-  //ESC key to exit
-
   $scope.feedback = {
     success: '',
     info: '',
@@ -140,4 +134,13 @@ module.exports = function($scope, AuthService, MsgFactory, chatSocket) {
       $scope.feedback[level] = '';
     }
   };
+
+  function dismissAllAlerts() {
+    $scope.feedback = {
+      success: '',
+      info: '',
+      warning: '',
+      danger: ''
+    };
+  }
 };

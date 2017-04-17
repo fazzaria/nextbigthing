@@ -1,4 +1,3 @@
-//STALIN FOR TIME: A Chatroom-Based Game of Political Correctness
 var angular        = require('angular');
 var angularRoute   = require('angular-route');
 var angularAnimate = require('angular-animate');
@@ -18,13 +17,13 @@ var css = require('./public/css/style.css');
 var app = angular.module('app', [angularRoute, 'ngAnimate', 'btford.socket-io']);
 
 app.config(function ($httpProvider) {
-    $httpProvider.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded; charset=UTF-8';
-    $httpProvider.defaults.transformRequest = function(data) {
-        if (data === undefined) {
-            return data;
-        }
-        return $.param(data);
-	};
+  $httpProvider.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded; charset=UTF-8';
+  $httpProvider.defaults.transformRequest = function(data) {
+    if (data === undefined) {
+      return data;
+    }
+    return $.param(data);
+  };
 });
 
 //angular services and factories
@@ -35,10 +34,10 @@ app.service('AuthService', ['$http', '$window', 'UserFactory', require('./public
 var serverBaseUrl = window.location.origin;
 app.factory('chatSocket', function (socketFactory) {
 	var myIoSocket = io.connect(serverBaseUrl, {'forceNew': true});
-  	var socket = socketFactory({
-        ioSocket: myIoSocket
-    });
-    return socket;
+	var socket = socketFactory({
+    ioSocket: myIoSocket
+  });
+  return socket;
 }).factory('MsgFactory', ['$http', 'chatSocket', require('./public/js/services/MsgFactory')]);
 
 //angular controllers
@@ -50,5 +49,17 @@ app.controller('ChatCtrl', ['$scope', 'AuthService', 'MsgFactory', 'chatSocket',
 //initialize routes
 var AppRoutes = require('./public/js/appRoutes');
 app.config(['$routeProvider', '$locationProvider', AppRoutes]);
+
+//toggle navbar active class on view change
+app.run(function($rootScope) {
+  $rootScope.$on("$locationChangeStart", function(event, next, current) {
+    $('ul.nav > li').removeClass('active');
+    $('ul.nav > li > a').each(function() {
+      if(next == window.location.origin + $(this).attr('href')) {
+        $(this).parent().addClass('active');
+      };
+    });
+  });
+});
 
 require('./public/js/ui');
