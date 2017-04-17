@@ -1,5 +1,4 @@
 module.exports = function($routeProvider, $locationProvider) {
-
   $routeProvider
     .when('/', {
       templateUrl: 'views/home.html',
@@ -26,6 +25,6 @@ module.exports = function($routeProvider, $locationProvider) {
       templateUrl: 'views/401.html'
     })
     .otherwise({templateUrl:'views/404.html'});
-      
+
   $locationProvider.html5Mode(true);
 };

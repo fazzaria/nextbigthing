@@ -1,8 +1,10 @@
 module.exports = function($scope, UserFactory, AuthService) {
 	$scope.user = AuthService.currentUser();
 	$scope.deleteAccount = function() {
-		UserFactory.delete(AuthService.currentUser()).then(function() {
-			$scope.$parent.logout();
+		$scope.$parent.displayFeedback("Deleting account... :(");
+		UserFactory.delete(AuthService.currentUser()._id).then(function() {
+			$scope.hideFeedback();
+			$scope.logout();
 		});
 	}
 };

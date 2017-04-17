@@ -35,7 +35,7 @@
   <div class="row">
     <div class="col-md-12">
       <ul class="list-group">
-        <li class="list-group-item animation" ng-repeat="msg in msgs track by $index" ng-if="msg.Author.UserName!='ChatBot' || !hideChatBot">
+        <li class="list-group-item animation" ng-repeat="msg in msgs track by $index" ng-if="msg.Author.UserName!='ChatDaemon' || !hideChatBot">
           <span class="lead">{{msg.Author.DisplayName}}</span> <span class="small" data-toggle="tooltip" title={{formatDateAbsolute(msg.DatePosted)}}>({{formatDateRelative(msg.DatePosted)}}):</span>
           <span> {{msg.Content}}</span>
         </li>
@@ -45,13 +45,13 @@
   <div class="row">
     <div class="col-md-6">
       <form ng-submit="postMsg(post.text)" autocomplete="off">
-          <div class="input-group">
-              <input id="commentField" class="form-inline form-control" placeholder="Enter comments here" ng-model="post.text" type="text" autocomplete="off">
-              <span class="input-group-btn">
-                  <button type="submit" class="btn btn-primary btn-small form-inline">Send</button>
-              </span>
-          </div>
-        </form>
-      </div>
+        <div class="input-group">
+          <input id="commentField" class="form-inline form-control" placeholder="Enter comments here" ng-model="post.text" type="text" autocomplete="off">
+          <span class="input-group-btn">
+            <button type="submit" class="btn btn-primary btn-small form-inline">Send</button>
+          </span>
+        </div>
+      </form>
+    </div>
   </div>
 </div>

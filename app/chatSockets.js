@@ -12,22 +12,14 @@ module.exports = function(io) {
 		});
 	}
 
-	/*io.sockets.on('disconnect', function() {
-		console.log('disconnect');
-		io.sockets.disconnect();
-		io.sockets.close();
-	});*/
-
 	var chatDaemon = {
 		UserName: 'ChatDaemon',
 		DisplayName: 'ChatDaemon'
 	};
 
 	io.on('connection', function(socket) {
-		console.log("connected");
 
 		getRooms(function(rooms) {
-			console.log("got rooms");
 			socket.emit('room data', {
 				rooms: rooms
 			});
@@ -65,7 +57,7 @@ module.exports = function(io) {
 			});
 		});
 
-		socket.on('leave room', function(data) {
+		socket.on('user left', function(data) {
 			socket.leave(data.room.Name);
 			updateUsersOnline(data.room.Name, -1);
 			io.in(data.room.Name).emit('user left');
@@ -84,7 +76,6 @@ module.exports = function(io) {
 		});
 
 		socket.on('disconnect', function(data) {
-			console.log("disconnected");
 		});
 
 		function addMessage(data) {
