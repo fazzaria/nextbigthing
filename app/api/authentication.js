@@ -6,21 +6,21 @@ module.exports.register = function(req, res) {
 	var user = new User();
 	user.UserName = req.body.UserName.toLowerCase();
 	user.DisplayName = req.body.DisplayName;
-    user.DateRegistered = new Date();
+  user.DateRegistered = new Date();
 
-    user.setPassword(req.body.Pwd);
+  user.setPassword(req.body.Pwd);
 
-    user.save(function(err) {
-    	if (err) {
-    		res.send(err);
-    	}
-    	var token;
-    	token = user.generateJwt();
-    	res.status(200);
-    	res.json({
-    		"token": token
-    	});
-    })(req, res);
+  user.save(function(err) {
+  	if (err) {
+  		res.send(err);
+  	}
+  	var token;
+  	token = user.generateJwt();
+  	res.status(200);
+  	res.json({
+  		"token": token
+  	});
+  })(req, res);
 };
 
 module.exports.login = function(req, res) {

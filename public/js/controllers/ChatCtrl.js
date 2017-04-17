@@ -25,22 +25,21 @@ module.exports = function($scope, AuthService, MsgFactory, chatSocket) {
     chatSocket.emit('user joined', data);
     $scope.currentRoom = room;
     $scope.refreshMsgs();
+    //esc key to leave current room
     $(document).keyup(function(e) {
-      console.log("keyup", e.keyCode);
-      if (e.keyCode == 27) {
-        console.log("?", $scope.leaveRoom);
-        $scope.leaveRoom(room);
+      if (e.keyCode == 27 && $scope.currentRoom.Name) {
+        $scope.leaveRoom($scope.currentRoom);
       }
     });
   };
 
   $scope.leaveRoom = function(room) {
-    var data = {room: room};
-    data.user = AuthService.currentUser();
-    chatSocket.emit('user left', data);
     $scope.currentRoom = {};
     $scope.msgs = [];
     $scope.post = {};
+    var data = {room: room};
+    data.user = AuthService.currentUser();
+    chatSocket.emit('user left', data);
   };
 
   $scope.refreshMsgs = function() {
@@ -74,7 +73,6 @@ module.exports = function($scope, AuthService, MsgFactory, chatSocket) {
 
   //socket code
   chatSocket.on('room data', function(data) {
-    console.log("got rooms (this should only fire once!)");
     $scope.rooms = data.rooms;
   });
 
@@ -83,7 +81,6 @@ module.exports = function($scope, AuthService, MsgFactory, chatSocket) {
   });
 
   chatSocket.on('user joined', function(data) {
-    console.log("user joined");
   });
 
   chatSocket.on('user left', function(data) {
