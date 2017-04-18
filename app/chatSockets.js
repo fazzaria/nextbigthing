@@ -19,17 +19,16 @@ module.exports = function(io) {
 
 	io.on('connection', function(socket) {
 		console.log("user connect");
-		//maintain state of user and room on server side
+
 		var userRoomData = {};
 		var inRoom = false;
+		var roomNames = [];
+		var rulesets = [];
 
 		getRooms(function(rooms) {
 			socket.emit('room data', {
 				rooms: rooms
 			});
-
-			var roomNames = [];
-			var rulesets = [];
 
 			for (var i = 0; i < rooms.length; i++) {
 				roomNames.push(rooms[i].Name);
@@ -60,7 +59,8 @@ module.exports = function(io) {
 			addMessage({
 				Author: chatDaemon,
 				Content: data.User.DisplayName + ' has joined the room.',
-				Room: data.Room
+				Room: data.Room,
+				callback: function() { socket.emit("join room finished", userRoomData.Room); console.log("join room finish event"); }
 			});
 		});
 
@@ -93,13 +93,15 @@ module.exports = function(io) {
 			addMessage({
 				Author: chatDaemon,
 				Content: data.User.DisplayName + ' has left the room.',
-				Room: data.Room
+				Room: data.Room,
+				callback: function() { socket.emit("leave room finished"); console.log("join room finish event"); }
 			});
 			inRoom = false;
 			userRoomData.Room = {};
 		}
 
 		function addMessage(data) {
+			console.log("message added to room", data.Room.Name);
 			var newMsg = new Msg({
 				Author: data.Author,
 				Content: data.Content,
@@ -111,6 +113,9 @@ module.exports = function(io) {
 					console.log("msg save error", err);
 				}
 				io.in(data.Room.Name).emit('new message', msg);
+				if(data.callback) {
+					data.callback();
+				}
 			});
 		}
 

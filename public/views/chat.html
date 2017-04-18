@@ -1,4 +1,4 @@
-<div ng-if="!currentRoom.Name">
+<div ng-if="!inRoom">
   <h4>Select a room:</h4>
   <div class="panel panel-primary" ng-repeat="room in rooms track by $index"> 
     <div class="panel-heading">
@@ -7,7 +7,7 @@
     <div class="panel-body">{{room.Description}} <a href="#" ng-click="joinRoom(room)">Join (Currently online: {{room.CurrentUsers}})</a></div>
   </div>
 </div>
-<div ng-if="currentRoom.Name" id="chatContainer">
+<div ng-if="inRoom" id="chatContainer">
   <h3>{{currentRoom.Name}} <a href="#" class="pull-right small" ng-click="leaveRoom(currentRoom)">Exit (ESC)</a></h3>
   <div ng-repeat="level in feedbackLevels">
     <div class="row" ng-if="feedback[level]">

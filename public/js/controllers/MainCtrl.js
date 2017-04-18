@@ -22,6 +22,7 @@ module.exports = function($scope, $location, AuthService) {
 			$scope.currentUser = AuthService.currentUser();
 			$scope.loginInfo = {};
 			$scope.hideFeedback();
+    		$location.path("/");
 		}, function() {
 			$scope.hideFeedback();
 		});
@@ -42,6 +43,8 @@ module.exports = function($scope, $location, AuthService) {
 	$scope.$on('$routeChangeStart', function(angularEvent, newUrl) {
     if (newUrl.requireAuth && !AuthService.isLoggedIn()) {
         $location.path("/401");
+    } else if (newUrl.newUsersOnly && AuthService.isLoggedIn()) {
+        $location.path("/");
     }
   });
 };

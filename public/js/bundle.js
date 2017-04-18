@@ -64106,7 +64106,8 @@ module.exports = function($routeProvider, $locationProvider) {
     })
     .when('/register', {
       templateUrl: 'views/register.html',
-      controller: 'RegistrationCtrl'
+      controller: 'RegistrationCtrl',
+      newUsersOnly: true
     })
     .when('/settings', {
       templateUrl: 'views/settings.html',
@@ -64128,19 +64129,26 @@ module.exports = function($scope, AuthService, MsgFactory, chatSocket) {
 
   $scope.msgs = [];
   $scope.post = {};
+  $scope.inRoom = false;
 
   $scope.$on('$viewContentLoaded', function(event) {
     if (AuthService.isLoggedIn()) {
       chatSocket.connect();
+      $(document).keyup(keyupHandler);
     }
   });
 
   $scope.$on("$destroy", function() {
-    if ($scope.currentRoom.Name) {
+    if ($scope.inRoom) {
       $scope.leaveRoom($scope.currentRoom);
     }
     chatSocket.disconnect();
     chatSocket.removeAllListeners();
+    $(document).off("keyup", keyupHandler);
+  });
+
+  chatSocket.on('room data', function(data) {
+    $scope.rooms = data.rooms;
   });
 
   $scope.joinRoom = function(room) {
@@ -64149,24 +64157,31 @@ module.exports = function($scope, AuthService, MsgFactory, chatSocket) {
       User: AuthService.currentUser()
     };
     chatSocket.emit('user joined', data);
-    $scope.currentRoom = room;
-    $scope.refreshMsgs();
-    //esc key to leave current room
-    $(document).keyup(function(e) {
-      if (e.keyCode == 27 && $scope.currentRoom.Name) {
-        $scope.leaveRoom($scope.currentRoom);
-      }
-    });
+    $scope.$parent.displayFeedback("Joining Room...");
   };
 
+  chatSocket.on('join room finished', function(room) {
+    $scope.currentRoom = room;
+    $scope.$parent.hideFeedback();
+    $scope.inRoom = true;
+    $scope.refreshMsgs();
+    //esc key to leave current room (event listeners multiplying :s)
+  });
+
   $scope.leaveRoom = function(room) {
+    var currentUser = AuthService.currentUser();
+    var data = {Room: room, User: currentUser};
+    chatSocket.emit('user left', data);
+    $scope.$parent.displayFeedback("Leaving Room...");
+  };
+
+  chatSocket.on('leave room finished', function() {
     $scope.currentRoom = {};
     $scope.msgs = [];
     $scope.post = {};
-    var data = {Room: room};
-    data.User = AuthService.currentUser();
-    chatSocket.emit('user left', data);
-  };
+    $scope.$parent.hideFeedback();
+    $scope.inRoom = false;
+  });
 
   $scope.refreshMsgs = function() {
     if ($scope.currentRoom._id) {
@@ -64179,8 +64194,8 @@ module.exports = function($scope, AuthService, MsgFactory, chatSocket) {
   };
 
   $scope.postMsg = function(text) {
-    var currentUser = AuthService.currentUser();
-    if (currentUser && text) {
+    if (AuthService.isLoggedIn() && text) {
+      var currentUser = AuthService.currentUser();
       var msg = {
         Author: {
           UserName: currentUser.UserName,
@@ -64191,15 +64206,16 @@ module.exports = function($scope, AuthService, MsgFactory, chatSocket) {
       };
       chatSocket.emit("sent message", msg);
       $scope.post = {};
+      AuthService.logout();
+      console.log(AuthService.isLoggedIn());
       $("#commentField").focus();
-    } else if (!currentUser) {
-      $scope.feedback[warning] = "Please log in.";
+    } else if (!AuthService.isLoggedIn()) {
+      $scope.feedback['warning'] = "Please log in.";
     }
   };
 
-  //socket code
-  chatSocket.on('room data', function(data) {
-    $scope.rooms = data.rooms;
+  chatSocket.on('new message', function(msg) {
+    $scope.msgs.push(msg);
   });
 
   chatSocket.on('msg all', function(data) {
@@ -64212,11 +64228,8 @@ module.exports = function($scope, AuthService, MsgFactory, chatSocket) {
   chatSocket.on('user left', function(data) {
   });
 
-  chatSocket.on('new message', function(msg) {
-    $scope.msgs.push(msg);
-  });
 
-  //UI Code
+  //UI code
   $scope.formatDateRelative = function(dateString) {
     var date = moment(dateString, "YYYY-MM-DD HH:mm:ss.SSSZ");
     var yesterday = moment().subtract(1, 'days').hours(23).minutes(59);
@@ -64236,7 +64249,7 @@ module.exports = function($scope, AuthService, MsgFactory, chatSocket) {
 
   $scope.formatDateAbsolute = function(dateString) {
     var date = moment(dateString, "YYYY-MM-DD HH:mm:ss.SSSZ");
-    return date.format('M/DD/YYYY h:mm A');
+    return date.format('M/DD/YYYY h:mm:ss A');
   };
 
   $scope.hideChatBot = false;
@@ -64265,6 +64278,12 @@ module.exports = function($scope, AuthService, MsgFactory, chatSocket) {
       danger: ''
     };
   }
+
+  function keyupHandler(e) {
+    if (e.keyCode == 27 && $scope.inRoom) {
+      $scope.leaveRoom($scope.currentRoom);
+    }
+  }
 };
 },{"jQuery":51,"moment":54}],81:[function(require,module,exports){
 module.exports = function($scope, $location, AuthService) {
@@ -64291,6 +64310,7 @@ module.exports = function($scope, $location, AuthService) {
 			$scope.currentUser = AuthService.currentUser();
 			$scope.loginInfo = {};
 			$scope.hideFeedback();
+    		$location.path("/");
 		}, function() {
 			$scope.hideFeedback();
 		});
@@ -64311,6 +64331,8 @@ module.exports = function($scope, $location, AuthService) {
 	$scope.$on('$routeChangeStart', function(angularEvent, newUrl) {
     if (newUrl.requireAuth && !AuthService.isLoggedIn()) {
         $location.path("/401");
+    } else if (newUrl.newUsersOnly && AuthService.isLoggedIn()) {
+        $location.path("/");
     }
   });
 };

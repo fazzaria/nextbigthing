@@ -14,7 +14,8 @@ module.exports = function($routeProvider, $locationProvider) {
     })
     .when('/register', {
       templateUrl: 'views/register.html',
-      controller: 'RegistrationCtrl'
+      controller: 'RegistrationCtrl',
+      newUsersOnly: true
     })
     .when('/settings', {
       templateUrl: 'views/settings.html',
