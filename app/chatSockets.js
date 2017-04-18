@@ -18,6 +18,10 @@ module.exports = function(io) {
 	};
 
 	io.on('connection', function(socket) {
+		console.log("user connect");
+		//maintain state of user and room on server side
+		var userRoomData = {};
+		var inRoom = false;
 
 		getRooms(function(rooms) {
 			socket.emit('room data', {
@@ -46,26 +50,32 @@ module.exports = function(io) {
 		});
 
 		socket.on('user joined', function(data) {
-			socket.join(data.room.Name);
-			var numClients = numClientsInRoom('/', data.room.Name);
-			updateUsersOnline(data.room.Name, numClients);
-			io.in(data.room.Name).emit('user joined');
+			console.log("user join event");
+			userRoomData = data;
+			inRoom = true;
+			socket.join(data.Room.Name);
+			var numClients = numClientsInRoom('/', data.Room.Name);
+			updateUsersOnline(data.Room.Name, numClients);
+			io.in(data.Room.Name).emit('user joined');
 			addMessage({
 				Author: chatDaemon,
-				Content: data.user.DisplayName + ' has joined the room.',
-				Room: data.room
+				Content: data.User.DisplayName + ' has joined the room.',
+				Room: data.Room
 			});
 		});
 
+		//manual exit event
 		socket.on('user left', function(data) {
-			socket.leave(data.room.Name);
-			updateUsersOnline(data.room.Name, -1);
-			io.in(data.room.Name).emit('user left');
-			addMessage({
-				Author: chatDaemon,
-				Content: data.user.DisplayName + ' has left the room.',
-				Room: data.room
-			});
+			console.log("user left event");
+			userLeave(userRoomData);
+		});
+
+		//window navigation or connection loss event
+		socket.on('disconnect', function(data) {
+			console.log("disconnect event");
+			if (inRoom) {
+				userLeave(userRoomData);
+			}
 		});
 
 		socket.on('sent message', function(data) {
@@ -75,8 +85,19 @@ module.exports = function(io) {
 			}
 		});
 
-		socket.on('disconnect', function(data) {
-		});
+		function userLeave(data) {
+			console.log("userLeave function called");
+			socket.leave(data.Room.Name);
+			updateUsersOnline(data.Room.Name, -1);
+			io.in(data.Room.Name).emit('user left');
+			addMessage({
+				Author: chatDaemon,
+				Content: data.User.DisplayName + ' has left the room.',
+				Room: data.Room
+			});
+			inRoom = false;
+			userRoomData.Room = {};
+		}
 
 		function addMessage(data) {
 			var newMsg = new Msg({
