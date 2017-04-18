@@ -64145,8 +64145,8 @@ module.exports = function($scope, AuthService, MsgFactory, chatSocket) {
 
   $scope.joinRoom = function(room) {
     var data = {
-      room: room,
-      user: AuthService.currentUser()
+      Room: room,
+      User: AuthService.currentUser()
     };
     chatSocket.emit('user joined', data);
     $scope.currentRoom = room;
@@ -64163,8 +64163,8 @@ module.exports = function($scope, AuthService, MsgFactory, chatSocket) {
     $scope.currentRoom = {};
     $scope.msgs = [];
     $scope.post = {};
-    var data = {room: room};
-    data.user = AuthService.currentUser();
+    var data = {Room: room};
+    data.User = AuthService.currentUser();
     chatSocket.emit('user left', data);
   };
 
@@ -64245,12 +64245,11 @@ module.exports = function($scope, AuthService, MsgFactory, chatSocket) {
     $scope.hideChatBot = !$scope.hideChatBot;
   };
 
-  $scope.feedback = {
-    success: '',
-    info: '',
-    warning: '',
-    danger: ''
-  };
+  $scope.feedbackLevels = ["success", "info", "warning", "danger"];
+  $scope.feedback = {};
+  for (var i = 0; i < $scope.feedbackLevels.length; i++) {
+    $scope.feedback[$scope.feedbackLevels[i]] = '';
+  }
 
   $scope.dismissAlert = function(level) {
     if (level) {
