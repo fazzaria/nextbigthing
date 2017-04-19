@@ -6,7 +6,7 @@ module.exports = function(router) {
   // create a msg (accessed at POST http://localhost:8081/api/msgs)
   .post(function(req, res, next) {
     var msg = new Msg();
-    User.findOne({UserName: req.body.UserName}, function(err, user) {
+    User.findOne({UserName: req.body.Author.UserName}, function(err, user) {
       if (err) {
         res.send(err);
       }

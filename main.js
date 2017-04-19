@@ -27,8 +27,8 @@ app.config(function ($httpProvider) {
 });
 
 //angular services and factories
-app.factory('UserFactory', ['$http', require('./public/js/services/UserFactory')]);
-app.service('AuthService', ['$http', '$window', 'UserFactory', require('./public/js/services/AuthService')]);
+app.factory('UserFactory', ['$http', require('./public/js/services/UserFactory.js')]);
+app.service('AuthService', ['$http', '$window', 'UserFactory', require('./public/js/services/AuthService.js')]);
 
 //socket.io connection
 var serverBaseUrl = window.location.origin;
@@ -38,16 +38,16 @@ app.factory('chatSocket', function (socketFactory) {
     ioSocket: myIoSocket
   });
   return socket;
-}).factory('MsgFactory', ['$http', 'chatSocket', require('./public/js/services/MsgFactory')]);
+}).factory('MsgFactory', ['$http', 'chatSocket', require('./public/js/services/MsgFactory.js')]);
 
 //angular controllers
-app.controller('MainCtrl', ['$scope', '$location', 'AuthService', require('./public/js/controllers/MainCtrl')]);
-app.controller('RegistrationCtrl', ['$scope', '$location', 'AuthService', require('./public/js/controllers/RegistrationCtrl')]);
-app.controller('SettingsCtrl', ['$scope', 'UserFactory', 'AuthService', require('./public/js/controllers/SettingsCtrl')]);
-app.controller('ChatCtrl', ['$scope', 'AuthService', 'MsgFactory', 'chatSocket', require('./public/js/controllers/ChatCtrl')]);
+app.controller('MainCtrl', ['$scope', '$location', 'AuthService', require('./public/js/controllers/MainCtrl.js')]);
+app.controller('RegistrationCtrl', ['$scope', '$location', 'AuthService', require('./public/js/controllers/RegistrationCtrl.js')]);
+app.controller('SettingsCtrl', ['$scope', 'UserFactory', 'AuthService', require('./public/js/controllers/SettingsCtrl.js')]);
+app.controller('ChatCtrl', ['$scope', 'AuthService', 'MsgFactory', 'chatSocket', require('./public/js/controllers/ChatCtrl.js')]);
 
 //initialize routes
-var AppRoutes = require('./public/js/appRoutes');
+var AppRoutes = require('./public/js/appRoutes.js');
 app.config(['$routeProvider', '$locationProvider', AppRoutes]);
 
 //toggle navbar active class on view change
@@ -62,4 +62,4 @@ app.run(function($rootScope) {
   });
 });
 
-require('./public/js/ui');
+require('./public/js/ui.js');

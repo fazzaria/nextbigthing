@@ -7,7 +7,7 @@
     <base href="/">
     <link rel="stylesheet" src="css/style.css"/>
     <script src="js/bundle.js"></script>
-    <title>App</title>
+    <title>Chat App</title>
   </head>
   <body ng-app="app" ng-controller="MainCtrl">
     <div class="container">
@@ -20,23 +20,23 @@
           </button>
         </div>
         <div id="navCollapse" class="navbar-collapse collapse">
-            <ul class="nav navbar-nav">
-              <li><a href="/about">About</a></li>
-              <li><a href="/chat">Chat</a></li>
-            </ul>
-            <form ng-if="!loggedIn" ng-submit="tryLogin(loginInfo)" class="navbar-form navbar-right">
-              <div class="form-group">
-                <input placeholder="Username" class="form-inline form-control" type="text" ng-model="loginInfo.UserName">
-                <input placeholder="Password" class="form-inline form-control" type="password" ng-model="loginInfo.Pwd">
-              </div>
-              <button type="submit" class="btn btn-sm btn-primary">Login</button>
-              <button type="button" ng-click="goRegister()" class="btn btn-success btn-sm">Register</button>
-            </form>
-            <ul ng-if="loggedIn" class="nav navbar-nav navbar-right">
-              <li><a>Welcome, {{currentUser.DisplayName || "(not logged in)"}}</a></li>
-              <li><a href="/settings">Settings</a></li>
-              <li><a href="#" ng-click="logout()">Sign Out</a></li>
-            </ul>
+          <ul class="nav navbar-nav">
+            <li><a href="/about">About</a></li>
+            <li><a href="/chat">Chat</a></li>
+          </ul>
+          <form ng-if="!loggedIn" ng-submit="tryLogin(loginInfo)" class="navbar-form navbar-right">
+            <div class="form-group">
+              <input placeholder="Username" class="form-inline form-control" type="text" ng-model="loginInfo.UserName">
+              <input placeholder="Password" class="form-inline form-control" type="password" ng-model="loginInfo.Pwd">
+            </div>
+            <button type="submit" class="btn btn-sm btn-primary">Login</button>
+            <button type="button" ng-click="goRegister()" class="btn btn-success btn-sm">Register</button>
+          </form>
+          <ul ng-if="loggedIn" class="nav navbar-nav navbar-right">
+            <li><a>Welcome, {{currentUser.DisplayName || "(not logged in)"}}</a></li>
+            <li><a href="/settings">Settings</a></li>
+            <li><a href="#" ng-click="logout()">Sign Out</a></li>
+          </ul>
         </div>
       </nav>
       <div ng-view></div>

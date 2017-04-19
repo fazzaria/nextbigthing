@@ -28,8 +28,8 @@ app.config(function ($httpProvider) {
 });
 
 //angular services and factories
-app.factory('UserFactory', ['$http', require('./public/js/services/UserFactory')]);
-app.service('AuthService', ['$http', '$window', 'UserFactory', require('./public/js/services/AuthService')]);
+app.factory('UserFactory', ['$http', require('./public/js/services/UserFactory.js')]);
+app.service('AuthService', ['$http', '$window', 'UserFactory', require('./public/js/services/AuthService.js')]);
 
 //socket.io connection
 var serverBaseUrl = window.location.origin;
@@ -39,16 +39,16 @@ app.factory('chatSocket', function (socketFactory) {
     ioSocket: myIoSocket
   });
   return socket;
-}).factory('MsgFactory', ['$http', 'chatSocket', require('./public/js/services/MsgFactory')]);
+}).factory('MsgFactory', ['$http', 'chatSocket', require('./public/js/services/MsgFactory.js')]);
 
 //angular controllers
-app.controller('MainCtrl', ['$scope', '$location', 'AuthService', require('./public/js/controllers/MainCtrl')]);
-app.controller('RegistrationCtrl', ['$scope', '$location', 'AuthService', require('./public/js/controllers/RegistrationCtrl')]);
-app.controller('SettingsCtrl', ['$scope', 'UserFactory', 'AuthService', require('./public/js/controllers/SettingsCtrl')]);
-app.controller('ChatCtrl', ['$scope', 'AuthService', 'MsgFactory', 'chatSocket', require('./public/js/controllers/ChatCtrl')]);
+app.controller('MainCtrl', ['$scope', '$location', 'AuthService', require('./public/js/controllers/MainCtrl.js')]);
+app.controller('RegistrationCtrl', ['$scope', '$location', 'AuthService', require('./public/js/controllers/RegistrationCtrl.js')]);
+app.controller('SettingsCtrl', ['$scope', 'UserFactory', 'AuthService', require('./public/js/controllers/SettingsCtrl.js')]);
+app.controller('ChatCtrl', ['$scope', 'AuthService', 'MsgFactory', 'chatSocket', require('./public/js/controllers/ChatCtrl.js')]);
 
 //initialize routes
-var AppRoutes = require('./public/js/appRoutes');
+var AppRoutes = require('./public/js/appRoutes.js');
 app.config(['$routeProvider', '$locationProvider', AppRoutes]);
 
 //toggle navbar active class on view change
@@ -63,8 +63,8 @@ app.run(function($rootScope) {
   });
 });
 
-require('./public/js/ui');
-},{"./public/css/style.css":78,"./public/js/appRoutes":79,"./public/js/controllers/ChatCtrl":80,"./public/js/controllers/MainCtrl":81,"./public/js/controllers/RegistrationCtrl":82,"./public/js/controllers/SettingsCtrl":83,"./public/js/services/AuthService":84,"./public/js/services/MsgFactory":85,"./public/js/services/UserFactory":86,"./public/js/ui":87,"angular":9,"angular-animate":4,"angular-route":6,"angular-socket-io":7,"bootstrap":14,"jquery":52,"moment":54,"socket.io-client":60}],2:[function(require,module,exports){
+require('./public/js/ui.js');
+},{"./public/css/style.css":78,"./public/js/appRoutes.js":79,"./public/js/controllers/ChatCtrl.js":80,"./public/js/controllers/MainCtrl.js":81,"./public/js/controllers/RegistrationCtrl.js":82,"./public/js/controllers/SettingsCtrl.js":83,"./public/js/services/AuthService.js":84,"./public/js/services/MsgFactory.js":85,"./public/js/services/UserFactory.js":86,"./public/js/ui.js":87,"angular":9,"angular-animate":4,"angular-route":6,"angular-socket-io":7,"bootstrap":14,"jquery":52,"moment":54,"socket.io-client":60}],2:[function(require,module,exports){
 module.exports = after
 
 function after(count, callback, err_cb) {
@@ -64129,6 +64129,7 @@ module.exports = function($scope, AuthService, MsgFactory, chatSocket) {
 
   $scope.msgs = [];
   $scope.post = {};
+  $scope.rulesets = [];
   $scope.inRoom = false;
 
   $scope.$on('$viewContentLoaded', function(event) {
@@ -64141,6 +64142,7 @@ module.exports = function($scope, AuthService, MsgFactory, chatSocket) {
   $scope.$on("$destroy", function() {
     if ($scope.inRoom) {
       $scope.leaveRoom($scope.currentRoom);
+      $scope.$parent.hideFeedback();
     }
     chatSocket.disconnect();
     chatSocket.removeAllListeners();
@@ -64149,6 +64151,15 @@ module.exports = function($scope, AuthService, MsgFactory, chatSocket) {
 
   chatSocket.on('room data', function(data) {
     $scope.rooms = data.rooms;
+    var rulesets = [];
+    for (var i = 0; i < data.rooms.length; i++) {
+      if (data.rooms[i].RulesetName) {
+        //rulesets.push(require("./rulesets/" + data.rooms[i].RulesetName + ".js"));
+      } else {
+        rulesets.push({});
+      }
+    }
+    $scope.rulesets = rulesets;
   });
 
   $scope.joinRoom = function(room) {
@@ -64162,10 +64173,9 @@ module.exports = function($scope, AuthService, MsgFactory, chatSocket) {
 
   chatSocket.on('join room finished', function(room) {
     $scope.currentRoom = room;
-    $scope.$parent.hideFeedback();
     $scope.inRoom = true;
     $scope.refreshMsgs();
-    //esc key to leave current room (event listeners multiplying :s)
+    $scope.$parent.hideFeedback();
   });
 
   $scope.leaveRoom = function(room) {
@@ -64179,8 +64189,9 @@ module.exports = function($scope, AuthService, MsgFactory, chatSocket) {
     $scope.currentRoom = {};
     $scope.msgs = [];
     $scope.post = {};
-    $scope.$parent.hideFeedback();
+    dismissAllAlerts();
     $scope.inRoom = false;
+    $scope.$parent.hideFeedback();
   });
 
   $scope.refreshMsgs = function() {
@@ -64204,13 +64215,16 @@ module.exports = function($scope, AuthService, MsgFactory, chatSocket) {
         Content: text,
         Room: $scope.currentRoom
       };
-      chatSocket.emit("sent message", msg);
-      $scope.post = {};
-      AuthService.logout();
-      console.log(AuthService.isLoggedIn());
-      $("#commentField").focus();
+      MsgFactory.create(msg).then(function() {
+        chatSocket.emit("sent message", msg);
+        $scope.post = {};
+        $("#commentField").focus();
+      }, function(err) {
+        console.log("chat message error", err);
+        $("#commentField").focus();
+      });
     } else if (!AuthService.isLoggedIn()) {
-      $scope.feedback['warning'] = "Please log in.";
+      $scope.feedback['warning'] = "Your login has expired. Please log in.";
     }
   };
 
@@ -64228,6 +64242,9 @@ module.exports = function($scope, AuthService, MsgFactory, chatSocket) {
   chatSocket.on('user left', function(data) {
   });
 
+  chatSocket.on("move made", function(data) {
+    console.log("move made", data);
+  });
 
   //UI code
   $scope.formatDateRelative = function(dateString) {

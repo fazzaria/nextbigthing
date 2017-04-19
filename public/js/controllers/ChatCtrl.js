@@ -5,6 +5,7 @@ module.exports = function($scope, AuthService, MsgFactory, chatSocket) {
 
   $scope.msgs = [];
   $scope.post = {};
+  $scope.rulesets = [];
   $scope.inRoom = false;
 
   $scope.$on('$viewContentLoaded', function(event) {
@@ -17,6 +18,7 @@ module.exports = function($scope, AuthService, MsgFactory, chatSocket) {
   $scope.$on("$destroy", function() {
     if ($scope.inRoom) {
       $scope.leaveRoom($scope.currentRoom);
+      $scope.$parent.hideFeedback();
     }
     chatSocket.disconnect();
     chatSocket.removeAllListeners();
@@ -25,6 +27,15 @@ module.exports = function($scope, AuthService, MsgFactory, chatSocket) {
 
   chatSocket.on('room data', function(data) {
     $scope.rooms = data.rooms;
+    var rulesets = [];
+    for (var i = 0; i < data.rooms.length; i++) {
+      if (data.rooms[i].RulesetName) {
+        //rulesets.push(require("./rulesets/" + data.rooms[i].RulesetName + ".js"));
+      } else {
+        rulesets.push({});
+      }
+    }
+    $scope.rulesets = rulesets;
   });
 
   $scope.joinRoom = function(room) {
@@ -38,10 +49,9 @@ module.exports = function($scope, AuthService, MsgFactory, chatSocket) {
 
   chatSocket.on('join room finished', function(room) {
     $scope.currentRoom = room;
-    $scope.$parent.hideFeedback();
     $scope.inRoom = true;
     $scope.refreshMsgs();
-    //esc key to leave current room (event listeners multiplying :s)
+    $scope.$parent.hideFeedback();
   });
 
   $scope.leaveRoom = function(room) {
@@ -55,8 +65,9 @@ module.exports = function($scope, AuthService, MsgFactory, chatSocket) {
     $scope.currentRoom = {};
     $scope.msgs = [];
     $scope.post = {};
-    $scope.$parent.hideFeedback();
+    dismissAllAlerts();
     $scope.inRoom = false;
+    $scope.$parent.hideFeedback();
   });
 
   $scope.refreshMsgs = function() {
@@ -80,13 +91,16 @@ module.exports = function($scope, AuthService, MsgFactory, chatSocket) {
         Content: text,
         Room: $scope.currentRoom
       };
-      chatSocket.emit("sent message", msg);
-      $scope.post = {};
-      AuthService.logout();
-      console.log(AuthService.isLoggedIn());
-      $("#commentField").focus();
+      MsgFactory.create(msg).then(function() {
+        chatSocket.emit("sent message", msg);
+        $scope.post = {};
+        $("#commentField").focus();
+      }, function(err) {
+        console.log("chat message error", err);
+        $("#commentField").focus();
+      });
     } else if (!AuthService.isLoggedIn()) {
-      $scope.feedback['warning'] = "Please log in.";
+      $scope.feedback['warning'] = "Your login has expired. Please log in.";
     }
   };
 
@@ -104,6 +118,9 @@ module.exports = function($scope, AuthService, MsgFactory, chatSocket) {
   chatSocket.on('user left', function(data) {
   });
 
+  chatSocket.on("move made", function(data) {
+    console.log("move made", data);
+  });
 
   //UI code
   $scope.formatDateRelative = function(dateString) {

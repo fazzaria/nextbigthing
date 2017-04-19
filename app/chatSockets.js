@@ -1,6 +1,6 @@
-var Msg = require('./models/msg');
-var User = require('./models/user').model;
-var Room = require('./models/room');
+var Msg = require('./models/msg.js');
+var User = require('./models/user.js').model;
+var Room = require('./models/room.js');
 
 module.exports = function(io) {
 
@@ -12,11 +12,6 @@ module.exports = function(io) {
 		});
 	}
 
-	var chatDaemon = {
-		UserName: 'ChatDaemon',
-		DisplayName: 'ChatDaemon'
-	};
-
 	io.on('connection', function(socket) {
 		console.log("user connect");
 
@@ -24,6 +19,12 @@ module.exports = function(io) {
 		var inRoom = false;
 		var roomNames = [];
 		var rulesets = [];
+		var settings = [];
+
+		var chatDaemon = {
+			UserName: 'ChatDaemon',
+			DisplayName: 'ChatDaemon'
+		};
 
 		getRooms(function(rooms) {
 			socket.emit('room data', {
@@ -33,7 +34,8 @@ module.exports = function(io) {
 			for (var i = 0; i < rooms.length; i++) {
 				roomNames.push(rooms[i].Name);
 				if (rooms[i].RulesetName) {
-					rulesets.push(require('./rulesets/' + rooms[i].RulesetName));
+					var ruleset = require('./rulesets/' + rooms[i].RulesetName + ".js");
+					rulesets.push(ruleset);
 				} else {
 					rulesets.push({});
 				}
@@ -56,11 +58,14 @@ module.exports = function(io) {
 			var numClients = numClientsInRoom('/', data.Room.Name);
 			updateUsersOnline(data.Room.Name, numClients);
 			io.in(data.Room.Name).emit('user joined');
-			addMessage({
+			var msg = new Msg({
 				Author: chatDaemon,
 				Content: data.User.DisplayName + ' has joined the room.',
-				Room: data.Room,
-				callback: function() { socket.emit("join room finished", userRoomData.Room); console.log("join room finish event"); }
+				Room: data.Room
+			});
+			daemonMessage(msg, function() { 
+				socket.emit("join room finished", userRoomData.Room);
+				console.log("join room finish event"); 
 			});
 		});
 
@@ -79,9 +84,16 @@ module.exports = function(io) {
 		});
 
 		socket.on('sent message', function(data) {
-			addMessage(data);
 			if(data.Room.RulesetName) {
-				//rulesets[roomNames.indexOf(data.Room.Name)].checkMessage(data.Content);
+				var callback = function(gameResult) {
+					addMessage(data);
+					data.callback = function() {
+						socket.emit("move made", gameResult);
+					}
+				}
+				rulesets[roomNames.indexOf(data.Room.Name)].makeMove(data.Content, callback);
+			} else {
+				addMessage(data);
 			}
 		});
 
@@ -90,14 +102,29 @@ module.exports = function(io) {
 			socket.leave(data.Room.Name);
 			updateUsersOnline(data.Room.Name, -1);
 			io.in(data.Room.Name).emit('user left');
-			addMessage({
+			var msg = new Msg({
 				Author: chatDaemon,
 				Content: data.User.DisplayName + ' has left the room.',
-				Room: data.Room,
-				callback: function() { socket.emit("leave room finished"); console.log("join room finish event"); }
+				Room: data.Room
+			});
+			daemonMessage(msg, function() { 
+				socket.emit("leave room finished");
+				console.log("leave room finish event"); 
 			});
 			inRoom = false;
 			userRoomData.Room = {};
+		}
+
+		function daemonMessage(msg, callback) {
+			msg.save(function(err, msg) {
+				if (err) {
+					console.log("daemon message save error", err);
+				}
+				io.in(msg.Room.Name).emit('new message', msg);
+				if(callback) {
+					callback();
+				}
+			});
 		}
 
 		function addMessage(data) {
