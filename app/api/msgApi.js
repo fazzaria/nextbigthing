@@ -22,10 +22,11 @@ module.exports = function(router) {
       });
     });
   });
-  //get msgs by room
-  router.route('/msgs/:roomID')
+  //get msgs by roomID, limit by maxResults
+  router.route('/msgs/:roomID/:maxResults?')
   .get(function(req, res) {
-    Msg.find({Room: req.params.roomID}).sort({DatePosted: 'ascending'}).exec(function(err, msgs) {
+    console.log(req.params);
+    Msg.find({Room: req.params.roomID}).sort({DatePosted: 'ascending'}).limit(req.params.maxResults || Infinity).exec(function(err, msgs) {
       if (err) {
         res.send(err);
       }

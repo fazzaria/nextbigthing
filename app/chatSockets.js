@@ -27,7 +27,7 @@ module.exports = function(io) {
 		};
 
 		getRooms(function(rooms) {
-			socket.emit('room data', {
+			socket.emit('room list data', {
 				rooms: rooms
 			});
 
@@ -44,7 +44,7 @@ module.exports = function(io) {
 
 		socket.on('request rooms', function(data) {
 			getRooms(function(rooms) {
-				socket.emit('room data', {
+				socket.emit('room list data', {
 					rooms: rooms
 				});
 			});
@@ -160,7 +160,7 @@ module.exports = function(io) {
 				else {
 					//refresh room data for all sockets
 					getRooms(function(rooms) {
-						io.sockets.emit('room data', {
+						io.sockets.emit('room list data', {
 							rooms: rooms
 						});
 					});

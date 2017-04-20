@@ -8,43 +8,56 @@
   </div>
 </div>
 <div ng-if="inRoom" id="chatContainer">
-  <h3>{{currentRoom.Name}} <a href="#" class="pull-right small" ng-click="leaveRoom(currentRoom)">Exit (ESC)</a></h3>
-  <div ng-repeat="level in feedbackLevels">
-    <div class="row" ng-if="feedback[level]">
-      <div class="col-md-12">
-        <div class="alert {{'alert-' + level}} alert-dismissible" role="alert">
-          <button type="button" class="close" aria-label="Close" ng-click="dismissAlert(level)"><span aria-hidden="true">&times;</span></button>
-          <strong>Alert!</strong> {{feedback[level]}}
+  <div class="row">
+    <div class="col-md-9">
+      <h3>{{currentRoom.Name}} <a href="#" class="pull-right small" ng-click="leaveRoom(currentRoom)">Exit (ESC)</a></h3>
+      <div ng-repeat="level in feedbackLevels">
+        <div class="row" ng-if="feedback[level]">
+          <div class="col-md-12">
+            <div class="alert {{'alert-' + level}} alert-dismissible" role="alert">
+              <button type="button" class="close" aria-label="Close" ng-click="dismissAlert(level)"><span aria-hidden="true">&times;</span></button>
+              <strong>Alert!</strong> {{feedback[level]}}
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <p class="pull-right" ng-if="hideChatBot">Show bot messages <input type="checkbox" ng-model="hideChatBot" ng-click="toggleHideBot()"></p>
+          <p class="pull-right" ng-if="!hideChatBot">Hide bot messages <input type="checkbox" ng-model="hideChatBot" ng-click="toggleHideBot()"></p>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <ul class="list-group">
+            <li class="list-group-item animation" ng-repeat="msg in msgs track by $index" ng-if="msg.Author.UserName!='ChatDaemon' || !hideChatBot">
+              <span class="lead">{{msg.Author.DisplayName}}</span> <span class="small" data-toggle="tooltip" title={{formatDateAbsolute(msg.DatePosted)}}>({{formatDateRelative(msg.DatePosted)}}):</span>
+              <span> {{msg.Content}}</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-6">
+          <form ng-submit="postMsg(post.text)" autocomplete="off">
+            <div class="input-group">
+              <input id="commentField" class="form-inline form-control" placeholder="Enter comments here" ng-model="post.text" type="text" autocomplete="off">
+              <span class="input-group-btn">
+                <button type="submit" class="btn btn-primary btn-small form-inline">Send</button>
+              </span>
+            </div>
+          </form>
         </div>
       </div>
     </div>
-  </div>
-  <div class="row">
-    <div class="col-md-12">
-      <p class="pull-right" ng-if="hideChatBot">Show bot messages <input type="checkbox" ng-model="hideChatBot" ng-click="toggleHideBot()"></p>
-      <p class="pull-right" ng-if="!hideChatBot">Hide bot messages <input type="checkbox" ng-model="hideChatBot" ng-click="toggleHideBot()"></p>
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-md-12">
-      <ul class="list-group">
-        <li class="list-group-item animation" ng-repeat="msg in msgs track by $index" ng-if="msg.Author.UserName!='ChatDaemon' || !hideChatBot">
-          <span class="lead">{{msg.Author.DisplayName}}</span> <span class="small" data-toggle="tooltip" title={{formatDateAbsolute(msg.DatePosted)}}>({{formatDateRelative(msg.DatePosted)}}):</span>
-          <span> {{msg.Content}}</span>
-        </li>
-      </ul>
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-md-6">
-      <form ng-submit="postMsg(post.text)" autocomplete="off">
-        <div class="input-group">
-          <input id="commentField" class="form-inline form-control" placeholder="Enter comments here" ng-model="post.text" type="text" autocomplete="off">
-          <span class="input-group-btn">
-            <button type="submit" class="btn btn-primary btn-small form-inline">Send</button>
-          </span>
+    <div class="col-md-3">
+      <div class="row">
+        <div class="col-md-12">
+          <ul>
+            <li ng-repeat="level in feedbackLevels">{{level}}</li>
+          </ul>
         </div>
-      </form>
+      </div>
     </div>
   </div>
 </div>

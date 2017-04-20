@@ -64130,7 +64130,10 @@ module.exports = function($scope, AuthService, MsgFactory, chatSocket) {
   $scope.msgs = [];
   $scope.post = {};
   $scope.rulesets = [];
+  $scope.usersOnline = [];
   $scope.inRoom = false;
+
+  var maxMessages = 3;
 
   $scope.$on('$viewContentLoaded', function(event) {
     if (AuthService.isLoggedIn()) {
@@ -64149,7 +64152,11 @@ module.exports = function($scope, AuthService, MsgFactory, chatSocket) {
     $(document).off("keyup", keyupHandler);
   });
 
-  chatSocket.on('room data', function(data) {
+  chatSocket.on('room specific data', function(data) {
+    $scope.usersOnline = data.usersOnline;
+  });
+
+  chatSocket.on('room list data', function(data) {
     $scope.rooms = data.rooms;
     var rulesets = [];
     for (var i = 0; i < data.rooms.length; i++) {
@@ -64196,7 +64203,7 @@ module.exports = function($scope, AuthService, MsgFactory, chatSocket) {
 
   $scope.refreshMsgs = function() {
     if ($scope.currentRoom._id) {
-      MsgFactory.get($scope.currentRoom._id).then(function(success) {
+      MsgFactory.get(JSON.stringify({roomID: $scope.currentRoom._id, maxResults: maxMessages})).then(function(success) {
         $scope.msgs = success.data;
       }, function(err) {
         $scope.feedback[danger] = err;
@@ -64472,8 +64479,10 @@ module.exports = function($http, mySocket) {
   return {
     // call to get msgs
     get: function(data) {
+      console.log(data);
       return $http.get('/api/msgs/' + data)
         .then(function(success) {
+          console.log(success);
           return success;
         },
         function(err) {
